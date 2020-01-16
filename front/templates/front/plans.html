@@ -1,0 +1,65 @@
+{% extends 'front/base.html' %}
+{% block title%}Pricing Plans{% endblock %}
+{% block plans-active%}active{% endblock%}
+
+{% block content %}
+
+<div class="row">
+        <div class="col-sm-12 mt-4">
+                <h1 class="text-center text-dark">Our Plans</h1>
+            </div>
+    <div class="col-sm-12 mt-4">
+        <!-- This snippet uses Font Awesome 5 Free as a dependency. You can download it at fontawesome.io! -->
+        <!-- This code was found on JSFiddle https://jsfiddle.net/StartBootstrap/rgp3qdye/?utm_source=website&utm_medium=embed&utm_campaign=rgp3qdye -->
+
+<section class="pricing py-5">
+        <div class="container">
+          <div class="row">
+            <!-- Free Tier -->
+            <div class="col-lg-6">
+              <div class="card mb-5 mb-lg-0">
+                <div class="card-body">
+                  <h5 class="card-title text-muted text-uppercase text-center">Free</h5>
+                  <h6 class="card-price text-center">£0<span class="period">/month</span></h6>
+                  <hr>
+                  <ul class="fa-ul">
+                    <li><span class="fa-li"><i class="fas fa-check"></i></span>Basic Courses</li>
+                    <li><span class="fa-li"><i class="fas fa-check"></i></span>Community Support</li>
+                    <li><span class="fa-li"><i class="fas fa-check"></i></span>Real-World Practice</li>
+                    <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Advanced Courses</li>
+                    <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Dedicated Email Support</li>
+                    <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Monthly Projects</li>
+                    <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Progress Trophies</li>
+                  </ul>
+                  <a href="#" class="btn btn-block btn-info text-uppercase">Continue Free</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+                    <div class="card mb-5 mb-lg-0">
+                      <div class="card-body">
+                        <h5 class="card-title text-muted text-uppercase text-center">Pro</h5>
+                        <h6 class="card-price text-center">£4.99<span class="period">/month</span></h6>
+                        <hr>
+                        <ul class="fa-ul">
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Basic Courses</li>
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Community Support</li>
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Real-World Practice</li>
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Advanced Courses</li>
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Dedicated Email Support</li>
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Monthly Projects</li>
+                          <li><span class="fa-li"><i class="fas fa-check"></i></span>Progress Trophies</li>
+                        </ul>
+                        <a href="#" class="btn btn-block btn-info text-uppercase"><i class="fas fa-crown"></i> Go Pro <i class="fas fa-crown"></i></a>
+                      </div>
+                    </div>
+                  </div>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'dash/base.html' %}
+{% block title %}Editor {% endblock %}
+{% block content %}
+<div class="row mb-4 no-gutters">
+        <div class="col-md-6">
+            <h4>Editor window</h4>		
+            <!-- the editor window -->
+            <div id="editor"></div>
+            <!-- the editor library is included here along with its set up code -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
+            <script>
+              var editor = ace.edit("editor");
+              document.getElementById('editor').style.fontSize='14px';
+              editor.setTheme("ace/theme/terminal");
+              editor.getSession().setMode("ace/mode/python");
+                      
+              // Python code goes here
+              code = "print('Hello World')";
+  
+              editor.setValue(code);
+            </script>
+  
+                <button class="btn btn-default" onclick="runit()">Run program</button>
+            <button class="btn btn-default" onclick="clearAceCode()">Clear code</button>
+            <button class="btn btn-default" onclick="editor.setValue(code)">Restore code</button>
+        </div>
+        <div class="col-md-6"><h4>Console</h4><div id="codeOutput" class="p-1" style="width:100%" ></div>  </div>
+      </div>
+{% endblock %}

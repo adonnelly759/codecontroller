@@ -1,0 +1,54 @@
+{% extends 'front/base.html' %}
+{% block title %}Sign up {% endblock %}
+
+<!-- Start main content -->
+{% block content%}
+
+<div class="row">
+    <div class="col-sm-12 mt-4">
+        <h1 class="text-center text-dark">Get Started for Free</h1>
+    </div>
+
+    <div class="col-sm-6 mt-4">
+            <div class="card">
+                    <img src="https://miro.medium.com/max/12000/1*hEbJvltnslRrdEzjWQ7Img.jpeg" class="card-img" alt="...">
+                    <div class="card-img-overlay font-weight-bolder h-100 d-flex flex-column justify-content-end">
+                      <h2 class="card-text text-uppercase bg-info text-white">Learn to code with the best.</h2>
+                    </div>
+                  </div>
+    </div>
+
+    <div class="col-sm-12 col-md-6 mt-4">
+            <form>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="cc-email">Email:</label>
+                            <input type="cc-email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="cc-password">Password:</label>
+                                <input type="cc-password" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                                <button type="submit" class="btn btn-info btn-block">Sign up</button>
+                            </div>
+                </div>
+            </form>
+    
+            <div class="text-wrap mt-4">Or, using another account:</div>
+    
+            <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-google"></i> | Sign Up Using Google</button>
+            <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-facebook-f"></i> | Sign Up Using Facebook</button>
+    
+            <div class="text-wrap mt-4">This page is protected by reCAPTCHA, and subject to Google’s 
+                    Privacy Policy & Terms of Service. By signing up for CodeController, 
+                    you agree to CodeControllers's Terms of Service & Privacy Policy.</div>
+        </div>
+</div>
+
+
+{% endblock %}

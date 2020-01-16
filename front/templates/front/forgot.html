@@ -1,0 +1,25 @@
+{% extends 'front/base.html' %}
+{% block title %}Reset Password{% endblock %}
+
+<!-- Start main content -->
+{% block content%}
+
+<div class="row">
+    <div class="col-sm-12 mt-4">
+        <h1 class="text-center text-dark">Forgot your password?</h1>
+    </div>
+    <div class="col-sm-12 mt-5 mb-5">
+        <div class="w-50 mx-auto">
+                <form>
+                        <div class="input-group input-group-lg">
+                            <input type="email" class="form-control" placeholder="Email Address"> 
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-info btn-block font-weight-bold mt-4">Reset Password</button>
+                    </form>
+                    <p class="float-right mt-4"><a class="text-dark font-weight-bold" href="{% url 'front:signup' %}">Not signed up yet? Start for free</a></p>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}

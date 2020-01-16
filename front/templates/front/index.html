@@ -1,0 +1,58 @@
+{% extends 'front/base.html' %}
+{% block title %}Learn. Code. Control. {% endblock %}
+
+<!-- Start main content -->
+{% block content%}
+<div class="row">
+    <div class="col-sm-12 mt-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible"{% endif %}>{{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                    </div>
+                {% endfor %}
+        {% endif %}
+        <h1 class="text-center text-dark">Learn. Code. Control.</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 mt-4">
+    <div class="card">
+                <img src="https://static.seattletimes.com/wp-content/uploads/2015/12/3904d112-88bf-11e5-8ed4-75bd9fe05d05-780x520.jpg" class="card-img-top" alt="...">
+                <div class="card-body bg-info">
+                  <p class="card-text text-white">"Everybody should learn to program, it teaches you how to think" - Steve Jobs</p>
+                </div>
+              </div>
+    </div>
+    <div class="col-sm-12 col-md-6 mt-4">
+        <form>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="cc-email">Email:</label>
+                        <input type="cc-email" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="cc-password">Password:</label>
+                            <input type="cc-password" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                            <button type="submit" class="btn btn-info btn-block">Get Coding Now</button>
+                        </div>
+            </div>
+        </form>
+
+        <div class="text-wrap mt-4">Or, using another account:</div>
+
+        <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-google"></i> | Sign Up Using Google</button>
+        <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-facebook-f"></i> | Sign Up Using Facebook</button>
+
+        <div class="text-wrap mt-4">This page is protected by reCAPTCHA, and subject to Google’s 
+                Privacy Policy & Terms of Service. By signing up for CodeController, 
+                you agree to CodeControllers's Terms of Service & Privacy Policy.</div>
+    </div>
+</div>
+{% endblock %}
