@@ -21,6 +21,13 @@
   <!-- Custom styles for this template-->
   <link href="{% static 'dash/css/sb-admin.css' %}" rel="stylesheet">
 
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <!-- Quiz css -->
+  <link href="{% static 'dash/css/quiz.css' %}">
+  <script src="{% static 'dash/js/quiz.js' %}"></script>
+
   <!-- Change the height of the editor and output windows, below -->
   <style>
       #editor { 
@@ -31,6 +38,12 @@
 }
 
   </style>
+  <style>
+  #btnTrigger
+{
+display:none;
+}
+</style>
 
 <script>
 		// clear the editor window
@@ -79,7 +92,7 @@
   // End of Skulp scripts
   </script> 
 
-
+  {% block javascript %}{% endblock %}
 
 </head>
 
@@ -147,9 +160,14 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="">
+        <a href="{% url 'editor:index' %}" class="nav-link">
+          <i class="fab fa-python"></i>
+            <span>Python Editor</span></a>
+        </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'dash:projects' %} ">
           <i class="fas fa-chalkboard-teacher"></i>
-          <span>Courses</span></a>
+          <span>Projects</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="">

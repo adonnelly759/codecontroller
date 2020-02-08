@@ -1,0 +1,147 @@
+{% extends 'dash/base.html' %}
+{% block title %}Lessonsss{% endblock %}
+{% block javascript %}
+<script>
+
+    $(document).ready(function(){
+        // Hide badge card and next lesson
+        $('#nextLesson').hide();
+        $('.quiz-content').hide();
+        x = $('[id^=quizContent]')
+
+        // Partial code found from https://stackoverflow.com/questions/2465158/is-it-possible-to-remove-inline-styles-with-jquery
+        $(x[0]).attr('style', function(i, style){
+            return style && style.replace(/display[^;]+;?/g, '');
+        });
+
+        $("#completeLesson" ).on( "click", function() {
+            $('#btnTrigger').click();
+            
+        });
+    });
+
+correct = 0;
+function checkAnswer(question_id, answer_id, lesson_id){
+    question = $("input[name='quiz"+question_id+"']:checked").val();
+
+    $.ajax({
+    url: '/ajax/check-answer',
+    data: {
+        'question_id': question,
+        'answer_id': answer_id
+    },
+    type: 'get',
+    dataType: 'json',
+    success: function (data) {
+        if (data.correct) {
+            correct++;
+            console.log(correct)
+            $("label[for='customRadio"+answer_id+"']").addClass('text-success'); // Success text for correct answer
+            $("div[id='quizContent"+question_id+"']").hide(); // Hide that quiz
+            $("div[id='quizContent"+(question_id+1)+"']").show(); // Show next quiz
+        } else {
+            $("label[for='customRadio"+answer_id+"']").addClass('text-danger');
+        }
+
+        if(correct == data.max){
+            console.log("All answers correctly answers! You have unlocked a badge and the "+ data.nextLesson +" lesson!");
+            $('#btnTrigger').click();
+            $('#nextLesson').show();
+            updateLessonProgress(lesson_id);
+        }
+    }
+    });
+}
+
+function updateLessonProgress(lesson_id){
+    $.ajax({
+                url: '/ajax/update-progress',
+                data: {
+                    'lesson': lesson_id
+                },
+                type: 'get',
+                dataType: 'json',
+                success: function(data){
+                    if(data.success){
+                        console.log("Successfully updated lesson");
+                    }
+
+                    if(data.except){
+                        console.log("Failed to update lesson");
+                    }
+                }
+            });
+}
+
+  </script>
+{% endblock %}
+
+{% block content %}
+{% load split_answers %}  
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <h4 class="text-dark font-weight-bold">{{ lesson.course.title }}: {{ lesson.title }}</h4>
+  </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-sm-12 mt-4">
+        {{ lesson.content|linebreaks }}
+    </div>
+    <div class="col-sm-12 mt-4">
+        <h4 class="text-dark font-weight-bold">Quiz yourself!</h4>
+            {% if questions.count > 0 %}
+                {% for q in questions %}
+                    <div id="quizContent{{q.id}}" class="quiz-content row mb-2">
+                        <div class="col-sm-12">
+                            {{ q.title }}
+                            {% for a in answers|split_answers:q.id %}
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="customRadio{{a.id}}" name="quiz{{q.id}}" class="custom-control-input" value="{{a.id}}" onclick="checkAnswer({{q.id|escapejs}}, {{a.id|escapejs}}, {{q.quiz.lesson.id|escapejs}})">
+                                    <label class="custom-control-label" for="customRadio{{a.id}}">{{ a.title }}</label>
+                                </div>  
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% if nextL %}
+                    <a href="{% url 'dash:project-lesson' next.course.s next.s %}"><button type="button" id="completeLesson" class="btn btn-success" onclick="updateLessonProgress({{ lesson.id|escapejs }});">Complete Lesson</button></a>
+                {% else %}
+                    <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>
+                {% endif %}        
+            {% endif %}
+    </div>
+    <div class="col-sm-12 mt-4">
+        <button type="button" id="btnTrigger" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            Launch demo modal
+        </button>
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Awesome work!!</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <h4 class="text-center font-weight-bold text-dark">You earned a new badge!</h4 >
+                  <img class="img-thumbnail" src="https://i.ya-webdesign.com/images/award-badge-png-2.png">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  {% if nextL.exists %}
+                    <a href="{% url 'dash:project-lesson' next.course.s next.s %}"><button type="button" class="btn btn-success">Next Lesson</button></a>
+                {% else %}
+                    <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>
+                    {% endif %}  
+                  </div>
+              </div>
+            </div>
+          </div>
+    
+          <a href="{% url 'dash:project-lesson' next.course.s next.s %}"><button type="button" id="nextLesson" class="text-center btn btn-success">Start Next Lesson</button></a>
+    </div>
+</div>
+{% endblock %}

@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+import dash.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dash/', include('dash.urls')),
     path('editor', include('editor.urls')),
-    path('', include('front.urls'))
+    path('', include('front.urls')),
+    path('ajax/check-answer', dash.views.checkAnswer, name="check-answer"),
+    path('ajax/update-progress', dash.views.updateLessonProgress, name="update-progress")
 ]

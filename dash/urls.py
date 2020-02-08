@@ -7,5 +7,7 @@ app_name = "dash"
 urlpatterns = [
     path('', views.index, name='index'),
     path('logout', views.logoutView, name="logout"),
-    path('course/<slug>', views.lessonView, name="lesson"),
+    path('projects', views.projectView, name='projects'),
+    path('projects/<slug>', views.projectLessonView, name="project-slug"),
+    path('<project>/<lesson>', views.workflow, name="project-lesson")
 ]

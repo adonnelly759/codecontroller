@@ -51,13 +51,44 @@ class LessonProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
-    code = models.TextField()
     start = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    finish = models.DateTimeField(null=True, blank=True)
+    finish = models.DateTimeField(null=True, blank=True, auto_now=True)
 
     def __str__(self):
         return "%s - %s" % (self.user.get_full_name(), self.lesson.title)
 
+
     class Meta:
         verbose_name_plural = "Lesson Progression"
+
+class Quiz(models.Model):
+    title = models.CharField(max_length=255)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Quizes"
+
+class QuizQuestion(models.Model):
+    title = models.CharField(max_length=255)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s: %s" % (self.quiz.title, self.title)
+
+    class Meta:
+        verbose_name_plural = "Quiz Questions"
+
+class QuizAnswer(models.Model):
+    title = models.CharField(max_length=255)
+    correct = models.BooleanField(default=False)
+    question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s: %s - %s" % (self.question.quiz.title, self.question.title, self.title)
+
+    class Meta:
+        verbose_name_plural = "Question Answers"

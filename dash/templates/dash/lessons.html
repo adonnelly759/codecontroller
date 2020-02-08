@@ -1,29 +1,66 @@
 {% extends 'dash/base.html' %}
 {% block title %}Lessons{% endblock %}
 {% block content %}  
-          <div class="row mb-4">
-              <div class="col-sm-12 mt-4">
-                  <h4 class="text-dark font-weight-bold">{{ contentTitle }}</h4>
-              </div>
-                    <!-- Area Chart Example-->
-          {% if lessons %}
-            {% for lesson in lessons %}
-              <div class="col-sm-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ lesson.title }}</h5>
-                      <h6 class="card-subtitle mb-2 text-muted">
-                          <div class="progress">
-                              <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                            </div>
-                      </h6>
-                      <p class="card-text">{{ lesson.short }}</p>
-                      <a href="{% url 'editor:index' lesson.course.s lesson.s %}" class="btn btn-info card-link">Continue</a>
-                    </div>
-                  </div>
-                </div>
-            {% endfor %}
+<div class="row mb-4">
+{% if lessons %}
+  <div class="col-sm-12 mt-4">
+    <h4 class="text-dark font-weight-bold">Lessons for {{ projectTitle }}</h4>
+  </div>
+  {% for lp in lesson_progress %}
+    <div class="col-sm-4 mt-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ lp.lesson.title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            <!-- <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+            </div> -->
+          </h6>
+          <p class="card-text">{{ lp.lesson.short }}</p>
+          {% if lp.completed %}
+            <a href="{% url 'dash:project-lesson' lp.lesson.course.s lp.lesson.s %}"><button class="btn btn-success">Retake {{ lp.lesson.title }}</button></a>
+          {% else %}
+          <a href="{% url 'dash:project-lesson' lp.lesson.course.s lp.lesson.s %}"><button class="btn btn-info">Take {{ lp.lesson.title }}</button></a>
           {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  {% if not display_more %}
+  <div class="col-sm-4 mt-4">
+    <div class="card bg-warning text-dark">
+      <div class="card-body">
+        <h5 class="card-title">This project is complete fully!</h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+          <!-- <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+          </div> -->
+        </h6>
+        <p class="card-text">Awesome job. Why not help out your friends?</p>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-sm-4 mt-4">
+    <div class="card bg-dark text-white">
+      <div class="card-body">
+        <h5 class="card-title">Complete the previous lesson!</h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+          <!-- <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+          </div> -->
+        </h6>
+        <p class="card-text">There are more to unlock by completeting the previous lessons fully.</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   
-            </div>
-  {% endblock %} 
+{% endif %}
+</div>
+<div class="row mb-4">
+  <div class="col-sm-12 mt-4">
+    <a href="{% url 'dash:projects'%}"><button type="button" class="btn btn-dark float-right">View Projects</button></a>
+  </div>
+</div>
+{% endblock %} 

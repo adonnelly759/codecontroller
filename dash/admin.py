@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, Lesson, LessonProgress, Instructions
+from .models import Course, Lesson, LessonProgress, Instructions, Quiz, QuizQuestion, QuizAnswer
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('title', 'description',)
@@ -9,3 +9,6 @@ admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson)
 admin.site.register(LessonProgress)
 admin.site.register(Instructions)
+admin.site.register(Quiz)
+admin.site.register(QuizAnswer)
+admin.site.register(QuizQuestion)

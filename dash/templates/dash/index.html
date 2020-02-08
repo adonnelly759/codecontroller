@@ -71,22 +71,22 @@
   
           <div class="row mb-4">
               <div class="col-sm-12 mt-4">
-                  <h4 class="text-dark font-weight-bold">Learn</h4>
+                  <h4 class="text-dark font-weight-bold">Projects</h4>
               </div>
                     <!-- Area Chart Example-->
           {% if courses %}
             {% for course in courses %}
               <div class="col-sm-4">
                   <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ course.title }}</h5>
+                    <div class="card-body text-center">
+                      <h5 class="card-title text-left">{{ course.title }}</h5>
                       <h6 class="card-subtitle mb-2 text-muted">
                           <div class="progress">
                               <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
                             </div>
                       </h6>
                       <p class="card-text">{{ course.short }}</p>
-                      <a href="course/{{ course.s }}" class="btn btn-info card-link">Continue</a>
+                      <a href="{% url 'dash:project-slug' course.s %}" class="btn btn-info card-link text-center">View</a>
                     </div>
                   </div>
                 </div>
