@@ -70,24 +70,30 @@
           </div>
   
           <div class="row mb-4">
-              <div class="col-sm-12 mt-4">
+              <div class="col-sm-12 mb-4">
                   <h4 class="text-dark font-weight-bold">Projects</h4>
               </div>
                     <!-- Area Chart Example-->
           {% if courses %}
             {% for course in courses %}
-              <div class="col-sm-4">
-                  <div class="card">
-                    <div class="card-body text-center">
-                      <h5 class="card-title text-left">{{ course.title }}</h5>
-                      <h6 class="card-subtitle mb-2 text-muted">
-                          <div class="progress">
-                              <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                            </div>
-                      </h6>
-                      <p class="card-text">{{ course.short }}</p>
-                      <a href="{% url 'dash:project-slug' course.s %}" class="btn btn-info card-link text-center">View</a>
+                <div class="col-xl-6 col-sm-12 col-md-6 mb-3">
+                  <div class="card text-white bg-info o-hidden h-100">
+                    <div class="card-body">
+                      <div class="card-body-icon">
+                        <i class="fas fa-user-graduate"></i>
+                      </div>
+                      <div class="mr-5 font-weight-bold text-center text-underline">{{ course.title }}</div>
+                      <div class="mr-5">{{ course.short }}</div>
+                      <div class="mr-5 progress">
+                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                      </div>
                     </div>
+                    <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:project-slug' course.s %}">
+                      <span class="float-left">View {{ course.title }}</span>
+                      <span class="float-right">
+                        <i class="fas fa-angle-right"></i>
+                      </span>
+                    </a>
                   </div>
                 </div>
             {% endfor %}

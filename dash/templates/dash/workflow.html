@@ -1,6 +1,43 @@
 {% extends 'dash/base.html' %}
 {% block title %}Lessonsss{% endblock %}
 {% block javascript %}
+<style>
+.privew{ margin-bottom:20px;}
+.privewHome{ border:solid 1px #e1e1e1; background:#FFF; box-shadow:inset 0 0 50px rgba(000,000,000,0.1); padding:30px 40px 30px; border-radius:5px; font-size:14px; line-height:22px; font-weight:300; text-align:center}
+.privewHome h2{ text-align:center; font-size:30px; font-weight:300; line-height:40px; margin:0 0 25px; text-transform:capitalize}
+.privewHome h2 span{ display:block;}
+.privewHome p{ padding:0 0 8px 0; margin:0}
+.privewHome .button { font-size:18px; line-height:46px; padding:0 50px; font-weight:500;}
+.privewHome p.big{ color:#0088cc; font-size:22px; padding:10px 0 25px 0; text-transform:uppercase}
+
+.questionsBox{display:block;border:solid 1px #e3e3e3;padding:10px 20px 0px;box-shadow:inset 0 0 30px rgba(000,000,000,0.1), inset 0 0 4px rgba(255,255,255,1);border-radius:3px;margin:0 10px;}
+.questions{ background:#007fbe; color:#FFF; font-size:22px; padding:8px 30px; font-weight:300; margin:0 -30px 10px; position:relative;}
+.questions:before, .questions:after{ background:url("https://www.htmllion.com/img/icon.png") no-repeat left 0; display:block; position:absolute; top:100%; width:9px; height:7px; content:'.'; left:0; text-align:left; font-size:0}
+.questions:after{ left:auto; right:0; background-position:-10px 0}
+.answerList{ margin-bottom:15px;}
+.answerList li{ padding:3px 0;}
+.answerList li:first-child{ border-top-width:0}
+.answerList label{ display:block; padding:6px; border-radius:6px; border:solid 1px #dde7e8; font-weight:400; font-size:13px; cursor:pointer; font-family:Arial, sans-serif }
+.answerList li:hover label{ border-color:#d1d1d1;  background:#f2fafb; }
+.answerList li.selected label{ border-color:#b2d9ee;  background:#dcedf6;}
+
+.questionsRow { background:#dee3e6; margin:0 -20px; padding:10px 20px; border-radius:0 0 3px 3px; }
+.questionsRow span{ float:right; display:inline-block; line-height:30px; border:solid 1px #aeb9c0; padding:0 10px; background:#FFF; color:#007fbe; }
+
+.quizResult { margin:0 0 10px 0; border-bottom:solid 1px #e3e3e3; padding-bottom:6px; font-size: 15px; line-height: 28px; }
+.quizResult li{ margin:0 0 6px; border:solid 1px #e3e3e3;  padding:5px 20px; border-radius:5px; position:relative;}
+.quizResult h2 { font-size: 22px; margin:0; font-weight:300;}
+.quizResult li.resultAnsIswrong {background-color:#fff2f2; border-color:#fae1e1;}
+.quizResult li.resultAnsIscorrect{background-color:#f6ffee; border-color:#e2f8cf;}
+.quizResult .ansStute{ position:absolute; left:0; top:-1px; bottom:-1px;  color:#FFF;  font-weight:500; padding:0; width:6px;  border-radius:5px 0 0 5px;}
+.quizResult li.resultAnsIswrong .ansStute{background:#aa0101;}
+.quizResult li.resultAnsIscorrect .ansStute{background:#00a637;}
+
+.quizScore{ background:#e8f7ff; border:solid 1px #d8eefa; padding:10px 20px; border-radius:5px;}
+.quizScore a.button{ float:right;}
+.yourScore{ font-size:18px; line-height:30px; color:#0e5e88;}
+
+</style>
 <script>
 
     $(document).ready(function(){
@@ -78,29 +115,30 @@ function updateLessonProgress(lesson_id){
 
 {% block content %}
 {% load split_answers %}  
-<div class="row">
-  <div class="col-sm-12 mt-4">
-    <h4 class="text-dark font-weight-bold">{{ lesson.course.title }}: {{ lesson.title }}</h4>
-  </div>
-</div>
-
+<div class="container">
 <div class="row mb-4">
+    <div class="card h-100 o-hidden">
+        <div class="card-header text-white bg-primary font-weight-bold">{{ lesson.course.title }}: {{ lesson.title }}</div>
+        <div class="card-body">
+        <div class="card-body-icon"><i class="fas fa-hourglass-start"></i></div>
+          <p class="card-text">{{ lesson.content|linebreaks }}</p>
+          <p class="card-text"><hr></p>
+          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+        </div>
+      </div>
+    <div class="col-sm-12"><hr></div>
     <div class="col-sm-12 mt-4">
-        {{ lesson.content|linebreaks }}
-    </div>
-    <div class="col-sm-12 mt-4">
-        <h4 class="text-dark font-weight-bold">Quiz yourself!</h4>
+        <h4 class="text-dark font-weight-bold">Test your knowledge!</h4>
             {% if questions.count > 0 %}
                 {% for q in questions %}
-                    <div id="quizContent{{q.id}}" class="quiz-content row mb-2">
-                        <div class="col-sm-12">
-                            {{ q.title }}
-                            {% for a in answers|split_answers:q.id %}
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="customRadio{{a.id}}" name="quiz{{q.id}}" class="custom-control-input" value="{{a.id}}" onclick="checkAnswer({{q.id|escapejs}}, {{a.id|escapejs}}, {{q.quiz.lesson.id|escapejs}})">
-                                    <label class="custom-control-label" for="customRadio{{a.id}}">{{ a.title }}</label>
-                                </div>  
-                            {% endfor %}
+                    <div id="quizContent{{q.id}}" class="privew quiz-content mb-2">
+                        <div class="questionsBox">
+                            <div class="questions">{{q.title}}</div>
+                                <ul class="answersList list-group">
+                                    {% for a in answers|split_answers:q.id %}
+                                    <li class="list-group-item custom-control custom-radio mb-2"><label class="custom-control-label ml-2 mb-2" for="customRadio{{a.id}}"></h4><input type="radio" id="customRadio{{a.id}}" name="quiz{{q.id}}" class="custom-control-input" value="{{a.id}}" onclick="checkAnswer({{q.id|escapejs}}, {{a.id|escapejs}}, {{q.quiz.lesson.id|escapejs}})">{{ a.title }}</label></li>
+                                    {% endfor %}
+                                </ul>
                         </div>
                     </div>
                 {% endfor %}
@@ -111,6 +149,7 @@ function updateLessonProgress(lesson_id){
                     <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>
                 {% endif %}        
             {% endif %}
+
     </div>
     <div class="col-sm-12 mt-4">
         <button type="button" id="btnTrigger" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -143,5 +182,6 @@ function updateLessonProgress(lesson_id){
     
           <a href="{% url 'dash:project-lesson' next.course.s next.s %}"><button type="button" id="nextLesson" class="text-center btn btn-success">Start Next Lesson</button></a>
     </div>
+</div>
 </div>
 {% endblock %}
