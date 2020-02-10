@@ -27,7 +27,7 @@ def projectLessonView(request, slug):
         try:
             p = LessonProgress.objects.get(user = request.user, lesson = lesson)
         except LessonProgress.DoesNotExist:
-            cr = LessonProgress.objects.create(user=request.user, lesson=lesson, code="")
+            cr = LessonProgress.objects.create(user=request.user, lesson=lesson)
             cr.save()
 
     # Calculate amount of lessons to show

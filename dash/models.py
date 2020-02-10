@@ -58,7 +58,6 @@ class LessonProgress(models.Model):
     def __str__(self):
         return "%s - %s" % (self.user.get_full_name(), self.lesson.title)
 
-
     class Meta:
         verbose_name_plural = "Lesson Progression"
 
