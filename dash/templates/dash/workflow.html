@@ -39,14 +39,55 @@
 
 </style>
 <script>
+    var roomName = "{{ room_name|escapejs }}";
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + roomName + '/');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        document.querySelector('#chat-log').value += (message + '\n');
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+/*     $(document).ready(function(){
+        document.querySelector('#chat-message-input').focus();
+    }) */
+
+    function sendMessageEnter(){
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };  
+    }
+
+    function sendMessage(){
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    }
+</script>
+<script>
 
     $(document).ready(function(){
         // Hide badge card and next lesson
         $('#nextLesson').hide();
         $('.quiz-content').hide();
+        $('#showCorrect').hide();
+        $('#noQuestion').show();
         x = $('[id^=quizContent]')
 
         // Partial code found from https://stackoverflow.com/questions/2465158/is-it-possible-to-remove-inline-styles-with-jquery
+        // This leaves first elemenet shown on load
         $(x[0]).attr('style', function(i, style){
             return style && style.replace(/display[^;]+;?/g, '');
         });
@@ -81,9 +122,10 @@ function checkAnswer(question_id, answer_id, lesson_id){
         }
 
         if(correct == data.max){
-            console.log("All answers correctly answers! You have unlocked a badge and the "+ data.nextLesson +" lesson!");
+            // console.log("All answers correctly answers! You have unlocked a badge and the "+ data.nextLesson +" lesson!");
             $('#btnTrigger').click();
             $('#nextLesson').show();
+            $('#showCorrect').fadeIn();
             updateLessonProgress(lesson_id);
         }
     }
@@ -116,24 +158,23 @@ function updateLessonProgress(lesson_id){
 {% block content %}
 {% load split_answers %}  
 <div class="container">
+<div class="row mb-4"><button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button></div>
 <div class="row mb-4">
     <div class="card h-100 o-hidden">
         <div class="card-header text-white bg-primary font-weight-bold">{{ lesson.course.title }}: {{ lesson.title }}</div>
         <div class="card-body">
         <div class="card-body-icon"><i class="fas fa-hourglass-start"></i></div>
           <p class="card-text">{{ lesson.content|linebreaks }}</p>
-          <p class="card-text"><hr></p>
-          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
         </div>
       </div>
-    <div class="col-sm-12"><hr></div>
-    <div class="col-sm-12 mt-4">
+    <div class="col-sm-12 mt-2"><hr></div>
+    <div class="col-sm-12 mt-2">
         <h4 class="text-dark font-weight-bold">Test your knowledge!</h4>
             {% if questions.count > 0 %}
                 {% for q in questions %}
-                    <div id="quizContent{{q.id}}" class="privew quiz-content mb-2">
+                    <div id="quizContent{{q.id}}" class="privew quiz-content">
                         <div class="questionsBox">
-                            <div class="questions">{{q.title}}</div>
+                            <div class="questions bg-primary">{{q.title}}</div>
                                 <ul class="answersList list-group">
                                     {% for a in answers|split_answers:q.id %}
                                     <li class="list-group-item custom-control custom-radio mb-2"><label class="custom-control-label ml-2 mb-2" for="customRadio{{a.id}}"></h4><input type="radio" id="customRadio{{a.id}}" name="quiz{{q.id}}" class="custom-control-input" value="{{a.id}}" onclick="checkAnswer({{q.id|escapejs}}, {{a.id|escapejs}}, {{q.quiz.lesson.id|escapejs}})">{{ a.title }}</label></li>
@@ -143,13 +184,30 @@ function updateLessonProgress(lesson_id){
                     </div>
                 {% endfor %}
             {% else %}
-                {% if nextL %}
-                    <a href="{% url 'dash:project-lesson' next.course.s next.s %}"><button type="button" id="completeLesson" class="btn btn-success" onclick="updateLessonProgress({{ lesson.id|escapejs }});">Complete Lesson</button></a>
-                {% else %}
-                    <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>
-                {% endif %}        
+                <div id="noQuestion" class="privew quiz-content">
+                    <div class="questionsBox">
+                        <div class="questions bg-primary">No questions for this one!</div>
+                            <p>You can continue on with the course, or take time to chat with fellow members.</p>
+                            {% if nextL %}
+                                <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary mb-2" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>
+                            {% else %}
+                                <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary mb-2" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>    
+                            {% endif %}
+                    </div>
+                </div>  
             {% endif %}
 
+            <div id="showCorrect" class="privew quiz-content">
+                <div class="questionsBox">
+                    <div class="questions bg-primary">Questions all complete!</div>
+                        <p>Nice work. You must have learned a lot from this one :) why not take the next course?</p>
+                        {% if nextL %}
+                            <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary mb-2" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>
+                        {% else %}
+                            <a href="{% url 'dash:project-slug' next.course.s %}"><button type="button" class="btn btn-primary mb-2" onclick="updateLessonProgress({{lesson.id|escapejs}})">Complete Lesson</button></a>    
+                        {% endif %}
+                </div>
+            </div>  
     </div>
     <div class="col-sm-12 mt-4">
         <button type="button" id="btnTrigger" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -181,6 +239,11 @@ function updateLessonProgress(lesson_id){
           </div>
     
           <a href="{% url 'dash:project-lesson' next.course.s next.s %}"><button type="button" id="nextLesson" class="text-center btn btn-success">Start Next Lesson</button></a>
+    </div>
+    <div class="col-sm-12">
+        <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+    <input id="chat-message-input" type="text" onkeyup="sendMessageEnter();" size="100"/><br/>
+    <input id="chat-message-submit" type="button" onclick="sendMessage();" value="Send"/>
     </div>
 </div>
 </div>

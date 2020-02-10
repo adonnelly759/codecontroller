@@ -27,10 +27,23 @@ LOGOUT_REDIRECT_URL = '/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.107.21.166', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.141', '10.107.20.250']
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# ASGI
+ASGI_APPLICATION = "cc.routing.application"
+
+# Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('10.107.20.250', 6379)],
+        },
+    },
+}
 
 
 # Application definition
@@ -40,6 +53,13 @@ INSTALLED_APPS = [
     'editor',
     'front',
     'utils',
+    'channels',
+    'notifications',
+    'community',
+    'badges',
+    'account',
+    'activity',
+    'chat',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',

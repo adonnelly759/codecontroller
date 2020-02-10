@@ -23,5 +23,6 @@ urlpatterns = [
     path('editor', include('editor.urls')),
     path('', include('front.urls')),
     path('ajax/check-answer', dash.views.checkAnswer, name="check-answer"),
-    path('ajax/update-progress', dash.views.updateLessonProgress, name="update-progress")
+    path('ajax/update-progress', dash.views.updateLessonProgress, name="update-progress"),
+    path('chat/', include('chat.urls'))
 ]

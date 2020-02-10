@@ -87,9 +87,15 @@ def workflow(request, project, lesson):
     else:
         nextL = Lesson.objects.get(id=l.id)
 
-    print(nextL)
+    # generate room name
+    course_slug = l.course.s
+    lesson_slug = l.s
+    combine_slug = course_slug + lesson_slug
+    room_name = combine_slug.replace('-', '')
 
-    context = {'lesson': l, 'questions': q, 'answers': qa, 'next':nextL}
+    print(room_name)
+
+    context = {'lesson': l, 'questions': q, 'answers': qa, 'next':nextL, 'room_name': room_name}
     return render(request, 'dash/workflow.html', context)
 
 def updateLessonProgress(request):
