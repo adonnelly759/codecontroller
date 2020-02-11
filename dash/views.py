@@ -5,6 +5,8 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from .models import Course, Lesson, LessonProgress, Quiz, QuizQuestion, QuizAnswer
 from django.http import JsonResponse
+from django.utils.safestring import mark_safe
+import json
 
 # Create your views here.
 @login_required
@@ -93,9 +95,14 @@ def workflow(request, project, lesson):
     combine_slug = course_slug + lesson_slug
     room_name = combine_slug.replace('-', '')
 
-    print(room_name)
-
-    context = {'lesson': l, 'questions': q, 'answers': qa, 'next':nextL, 'room_name': room_name}
+    context = {
+        'lesson': l, 
+        'questions': q, 
+        'answers': qa, 
+        'next':nextL, 
+        'room_name_json': mark_safe(json.dumps(room_name)),
+        'username': mark_safe(json.dumps(request.user.username)),
+    }
     return render(request, 'dash/workflow.html', context)
 
 def updateLessonProgress(request):
