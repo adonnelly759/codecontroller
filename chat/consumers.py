@@ -2,13 +2,17 @@ from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 import json
-from .models import Message
+from .models import Message, Room
 
 User = get_user_model()
 
 class ChatConsumer(WebsocketConsumer):
     def fetch_messages(self, data):
-        messages = Message.last_10_messages()
+        x = Room.objects.filter(name=data['roomName'])
+        if not x.exists():
+            Room.objects.create(name=data['roomName'])
+
+        messages = Message.last_10_messages(data['roomName'])
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -25,8 +29,8 @@ class ChatConsumer(WebsocketConsumer):
         return {
             'author': message.author.username,
             'content': message.content,
-            'roomName': message.roomName,
-            'timestamp': str(message.timestamp)
+            'roomName': message.room,
+            'timestamp': message.timestamp.strftime("%d/%m/%Y %H:%M")
         }
 
     def new_message(self, data):
@@ -58,6 +62,10 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
+        x = Room.objects.get(name=self.room_name)
+        x.counter = x.counter+1
+        x.save()
+
         self.accept()
 
     def disconnect(self, close_code):
@@ -65,6 +73,10 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+
+        x = Room.objects.get(name=self.room_name)
+        x.counter = x.counter-1
+        x.save()
 
     def receive(self, text_data):
         data = json.loads(text_data)

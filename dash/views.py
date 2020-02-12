@@ -100,7 +100,7 @@ def workflow(request, project, lesson):
         'questions': q, 
         'answers': qa, 
         'next':nextL, 
-        'room_name_json': mark_safe(json.dumps(room_name)),
+        'room_name': mark_safe(json.dumps(room_name)),
         'username': mark_safe(json.dumps(request.user.username)),
     }
     return render(request, 'dash/workflow.html', context)

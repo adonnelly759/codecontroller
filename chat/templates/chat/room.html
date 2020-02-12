@@ -1,29 +1,173 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Room</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="{% static 'reconnecting-websocket.js' %}"></script>
-</head>
-<body>
-    <div id="chat-area" class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="float-right bg-primary text-white">SENT</div>
+{% extends 'dash/base.html' %}
+{% block title %}{{ lesson.title}}{% endblock %}
+{% block javascript %}
+<style>
+.privew{ margin-bottom:20px;}
+.privewHome{ border:solid 1px #e1e1e1; background:#FFF; box-shadow:inset 0 0 50px rgba(000,000,000,0.1); padding:30px 40px 30px; border-radius:5px; font-size:14px; line-height:22px; font-weight:300; text-align:center}
+.privewHome h2{ text-align:center; font-size:30px; font-weight:300; line-height:40px; margin:0 0 25px; text-transform:capitalize}
+.privewHome h2 span{ display:block;}
+.privewHome p{ padding:0 0 8px 0; margin:0}
+.privewHome .button { font-size:18px; line-height:46px; padding:0 50px; font-weight:500;}
+.privewHome p.big{ color:#0088cc; font-size:22px; padding:10px 0 25px 0; text-transform:uppercase}
+
+.questionsBox{display:block;border:solid 1px #e3e3e3;padding:10px 20px 0px;box-shadow:inset 0 0 30px rgba(000,000,000,0.1), inset 0 0 4px rgba(255,255,255,1);border-radius:3px;margin:0 10px;}
+.questions{ background:#007fbe; color:#FFF; font-size:22px; padding:8px 30px; font-weight:300; margin:0 -30px 10px; position:relative;}
+.questions:before, .questions:after{ background:url("https://www.htmllion.com/img/icon.png") no-repeat left 0; display:block; position:absolute; top:100%; width:9px; height:7px; content:'.'; left:0; text-align:left; font-size:0}
+.questions:after{ left:auto; right:0; background-position:-10px 0}
+.answerList{ margin-bottom:15px;}
+.answerList li{ padding:3px 0;}
+.answerList li:first-child{ border-top-width:0}
+.answerList label{ display:block; padding:6px; border-radius:6px; border:solid 1px #dde7e8; font-weight:400; font-size:13px; cursor:pointer; font-family:Arial, sans-serif }
+.answerList li:hover label{ border-color:#d1d1d1;  background:#f2fafb; }
+.answerList li.selected label{ border-color:#b2d9ee;  background:#dcedf6;}
+
+.questionsRow { background:#dee3e6; margin:0 -20px; padding:10px 20px; border-radius:0 0 3px 3px; }
+.questionsRow span{ float:right; display:inline-block; line-height:30px; border:solid 1px #aeb9c0; padding:0 10px; background:#FFF; color:#007fbe; }
+
+.quizResult { margin:0 0 10px 0; border-bottom:solid 1px #e3e3e3; padding-bottom:6px; font-size: 15px; line-height: 28px; }
+.quizResult li{ margin:0 0 6px; border:solid 1px #e3e3e3;  padding:5px 20px; border-radius:5px; position:relative;}
+.quizResult h2 { font-size: 22px; margin:0; font-weight:300;}
+.quizResult li.resultAnsIswrong {background-color:#fff2f2; border-color:#fae1e1;}
+.quizResult li.resultAnsIscorrect{background-color:#f6ffee; border-color:#e2f8cf;}
+.quizResult .ansStute{ position:absolute; left:0; top:-1px; bottom:-1px;  color:#FFF;  font-weight:500; padding:0; width:6px;  border-radius:5px 0 0 5px;}
+.quizResult li.resultAnsIswrong .ansStute{background:#aa0101;}
+.quizResult li.resultAnsIscorrect .ansStute{background:#00a637;}
+
+.quizScore{ background:#e8f7ff; border:solid 1px #d8eefa; padding:10px 20px; border-radius:5px;}
+.quizScore a.button{ float:right;}
+.yourScore{ font-size:18px; line-height:30px; color:#0e5e88;}
+
+</style>
+
+<script>
+
+    $(document).ready(function(){
+        // Hide badge card and next lesson
+        $('#nextLesson').hide();
+        $('.quiz-content').hide();
+        $('#showCorrect').hide();
+        $('#noQuestion').show();
+        x = $('[id^=quizContent]')
+
+        // Partial code found from https://stackoverflow.com/questions/2465158/is-it-possible-to-remove-inline-styles-with-jquery
+        // This leaves first elemenet shown on load
+        $(x[0]).attr('style', function(i, style){
+            return style && style.replace(/display[^;]+;?/g, '');
+        });
+
+        $("#completeLesson" ).on( "click", function() {
+            $('#btnTrigger').click();
+            
+        });
+    });
+
+correct = 0;
+function checkAnswer(question_id, answer_id, lesson_id){
+    question = $("input[name='quiz"+question_id+"']:checked").val();
+
+    $.ajax({
+    url: '/ajax/check-answer',
+    data: {
+        'question_id': question,
+        'answer_id': answer_id
+    },
+    type: 'get',
+    dataType: 'json',
+    success: function (data) {
+        if (data.correct) {
+            correct++;
+            console.log(correct)
+            $("label[for='customRadio"+answer_id+"']").addClass('text-success'); // Success text for correct answer
+            $("div[id='quizContent"+question_id+"']").hide(); // Hide that quiz
+            $("div[id='quizContent"+(question_id+1)+"']").show(); // Show next quiz
+        } else {
+            $("label[for='customRadio"+answer_id+"']").addClass('text-danger');
+        }
+
+        if(correct == data.max){
+            // console.log("All answers correctly answers! You have unlocked a badge and the "+ data.nextLesson +" lesson!");
+            $('#btnTrigger').click();
+            $('#nextLesson').show();
+            $('#showCorrect').fadeIn();
+            updateLessonProgress(lesson_id);
+        }
+    }
+    });
+}
+
+function updateLessonProgress(lesson_id){
+    $.ajax({
+                url: '/ajax/update-progress',
+                data: {
+                    'lesson': lesson_id
+                },
+                type: 'get',
+                dataType: 'json',
+                success: function(data){
+                    if(data.success){
+                        console.log("Successfully updated lesson");
+                    }
+
+                    if(data.except){
+                        console.log("Failed to update lesson");
+                    }
+                }
+            });
+}
+
+  </script>
+{% endblock %}
+
+{% block content %}
+<button class="open-button" onclick="openForm()">Chat <i class="fas fa-comments"></i></button>
+
+<div class="chat-popup" id="myForm">
+  <div class="form-container">
+       <div class="container">
+        <div class="row mb-1">
+            <div class="col-sm-6 no-gutters">
+            <h4>Header</h4>
+             </div>
+             <div class="col-sm-6 no-gutters">
+                 <div class="float-right" onclick="closeForm()"><button type="button" class="btn btn-link"><i class="fas fa-times"></i></button></div>
+             </div>
+        </div>
+       </div>
+
+        <div id="messages" class="message-content">
+            <!-- Received message -->
+            <div class="row p-2">
+                <div class="col-sm-12">
+                    <div class="received float-left bg-success text-white p-2 rounded">Test Message</div>
+                </div>
+                <div class="col-sm-12">
+                    <small class="text-muted align-middle float-left">10/02/2020 23:14</small>
+                </div>
+            </div>
+            <!-- Sent message-->
+            <div class="row p-2">
+                <div class="col-sm-12">
+                    <div class="sent float-right bg-primary text-white p-2 rounded">Test Message</div>
+                </div>
+                <div class="col-sm-12">
+                    <small class="text-muted align-middle float-right">10/02/2020 23:14</small>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="float-left bg-success text-white">RECEIVED</div>
-            </div>
-        </div>
-        
+        <input id="chat-message-input" type="text" placeholder="Type message.." name="msg" required>
     </div>
-    <input id="chat-message-input" type="text" size="100"/><br/>
-    <input id="chat-message-submit" type="button" value="Send"/>
-</body>
+</div>
+
+<script>
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+</script>
+
 <script>
     var roomName = {{ room_name }};
     var username = {{ username }}
@@ -33,7 +177,7 @@
         '/ws/chat/' + roomName + '/');
 
     chatSocket.onopen = function(e){
-        fetchMessages();
+        fetchMessages(roomName);
     };
 
     chatSocket.onmessage = function(e){
@@ -50,50 +194,135 @@
     function createMessage(data){
         var author = data['author'];
         var new_row = document.createElement('div');
-        new_row.classList.add('row')
+        new_row.classList.add('row', 'p-2')
         var new_col = document.createElement('div');
         new_col.classList.add('col-sm-12');
         var new_message = document.createElement('div');
+        var new_time = document.createElement('div');
+        new_time.classList.add('col-sm-12');
+        var small = document.createElement('small')
         new_message.textContent = data.content;
+        small.textContent = data.timestamp;
         if(author == username){
-            new_message.classList.add('float-right', 'bg-success', 'text-white');
+            new_message.classList.add('sent', 'float-right', 'bg-primary', 'text-white', 'p-2', 'rounded');
+            small.classList.add('text-muted', 'align-middle', 'float-right');
         } else {
-            new_message.classList.add('float-left', 'bg-primary', 'text-white');
+            new_message.classList.add('received', 'float-left', 'bg-success', 'text-white', 'p-2', 'rounded');
+            small.classList.add('text-muted', 'align-middle', 'float-left');
         }
+        
         new_row.appendChild(new_col)
-        new_row.appendChild(new_message)
-        document.querySelector('#chat-area').appendChild(new_row)
+        new_col.appendChild(new_message)
+        new_row.appendChild(new_time)
+        new_time.appendChild(small)
+        document.querySelector('#messages').appendChild(new_row)
     }
 
     chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
 
-    function fetchMessages(){
-        chatSocket.send(JSON.stringify({'command': 'fetch_messages'}));
+    function fetchMessages(roomName){
+        console.log(roomName);
+        chatSocket.send(JSON.stringify({'command': 'fetch_messages', 'roomName': roomName}));
     }
 
-    document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-input').onkeyup = function(e) {
-        if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
+        console.log(e.keyCode);
+        if(e.keyCode === 13 && document.querySelector("#chat-message-input").value != ""){
+            var messageInputDom = document.querySelector('#chat-message-input');
+            var message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'command': 'new_message',
+                'message': message,
+                'from': username,
+                'roomName': roomName
+            }));
+            messageInputDom.value = '';
+        } else {
+            console.log("Failed to enter");
         }
     };
-
-    document.querySelector('#chat-message-submit').onclick = function(e) {
-        var messageInputDom = document.querySelector('#chat-message-input');
-        var message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'command': 'new_message',
-            'message': message,
-            'from': username,
-            'roomName': roomName
-        }));
-
-        messageInputDom.value = '';
-    };
 </script>
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</html>
+
+<style>
+    body 
+    * {box-sizing: border-box;}
+
+    
+    /* Button used to open the chat form - fixed at the bottom of the page */
+    .open-button {
+      background-color: #555;
+      color: white;
+      padding: 16px 20px;
+      border: none;
+      cursor: pointer;
+      opacity: 0.8;
+      position: fixed;
+      bottom: 23px;
+      right: 23px;
+      width: 150px;
+    }
+    
+    /* The popup chat - hidden by default */
+    .chat-popup {
+      display: none;
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      border: 3px solid #f1f1f1;
+      z-index: 9;
+    }
+
+    .message-content {
+        max-height: 200px;
+        width: 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        background-color: #f2f2f2;
+    }
+    
+    /* Add styles to the form container */
+    .form-container {
+      max-width: 300px;
+      padding: 10px;
+      background-color: white;
+    }
+    
+    /* Full-width textarea */
+    .form-container input {
+      width: 100%;
+      padding: 15px;
+      margin: 5px 0 22px 0;
+      border: none;
+      background: #f1f1f1;
+      resize: none;
+    }
+    
+    /* When the textarea gets focus, do something */
+    .form-container textarea:focus {
+      background-color: #ddd;
+      outline: none;
+    }
+    
+    /* Set a style for the submit/send button */
+    
+    /* Add a red background color to the cancel button */
+    .form-container .cancel {
+      background-color: red;
+    }
+    
+    /* Add some hover effects to buttons */
+    .form-container .btn:hover, .open-button:hover {
+      opacity: 1;
+    }
+    </style>
+
+  <script>function openForm() {
+    document.getElementById("myForm").style.display = "block";
+  }
+  
+  function closeForm() {
+    document.getElementById("myForm").style.display = "none";
+  }</script>
+{% endblock %}
