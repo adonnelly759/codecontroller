@@ -1,31 +1,77 @@
-<!-- chat/templates/chat/room.html -->
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
     <title>Chat Room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="{% static 'reconnecting-websocket.js' %}"></script>
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+    <div id="chat-area" class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="float-right bg-primary text-white">SENT</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="float-left bg-success text-white">RECEIVED</div>
+            </div>
+        </div>
+        
+    </div>
     <input id="chat-message-input" type="text" size="100"/><br/>
     <input id="chat-message-submit" type="button" value="Send"/>
 </body>
 <script>
-    var roomName = "{{ room_name|escapejs }}";
+    var roomName = {{ room_name }};
+    var username = {{ username }}
 
-    var chatSocket = new WebSocket(
+    var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
-    chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        document.querySelector('#chat-log').value += (message + '\n');
+    chatSocket.onopen = function(e){
+        fetchMessages();
     };
+
+    chatSocket.onmessage = function(e){
+        var data = JSON.parse(e.data);
+        if(data['command'] === 'messages'){
+            for(let i=0; i<data['messages'].length; i++){
+                createMessage(data['messages'][i]);
+            }
+        } else if(data['command'] === 'new_message'){
+            createMessage(data['message']);
+        }    
+    };
+
+    function createMessage(data){
+        var author = data['author'];
+        var new_row = document.createElement('div');
+        new_row.classList.add('row')
+        var new_col = document.createElement('div');
+        new_col.classList.add('col-sm-12');
+        var new_message = document.createElement('div');
+        new_message.textContent = data.content;
+        if(author == username){
+            new_message.classList.add('float-right', 'bg-success', 'text-white');
+        } else {
+            new_message.classList.add('float-left', 'bg-primary', 'text-white');
+        }
+        new_row.appendChild(new_col)
+        new_row.appendChild(new_message)
+        document.querySelector('#chat-area').appendChild(new_row)
+    }
 
     chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
+
+    function fetchMessages(){
+        chatSocket.send(JSON.stringify({'command': 'fetch_messages'}));
+    }
 
     document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-input').onkeyup = function(e) {
@@ -38,10 +84,16 @@
         var messageInputDom = document.querySelector('#chat-message-input');
         var message = messageInputDom.value;
         chatSocket.send(JSON.stringify({
-            'message': message
+            'command': 'new_message',
+            'message': message,
+            'from': username,
+            'roomName': roomName
         }));
 
         messageInputDom.value = '';
     };
 </script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </html>
