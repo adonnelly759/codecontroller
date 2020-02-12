@@ -8,11 +8,10 @@ User = get_user_model()
 
 class ChatConsumer(WebsocketConsumer):
     def fetch_messages(self, data):
-        x = Room.objects.filter(name=data['roomName'])
-        if not x.exists():
-            Room.objects.create(name=data['roomName'])
+        if not Room.objects.filter(name=self.room_name).exists():
+            Room.objects.create(name=self.room_name)
 
-        messages = Message.last_10_messages(data['roomName'])
+        messages = Message.last_10_messages(self.room_name)
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -29,17 +28,17 @@ class ChatConsumer(WebsocketConsumer):
         return {
             'author': message.author.username,
             'content': message.content,
-            'roomName': message.room,
+            'roomName': message.room.name,
             'timestamp': message.timestamp.strftime("%d/%m/%Y %H:%M")
         }
 
     def new_message(self, data):
         author = data['from']
-        roomName = data['roomName']
+        room_instance = Room.objects.get(name=self.room_name)
         author_user = User.objects.filter(username=author)[0]
         message = Message.objects.create(
             author=author_user, 
-            roomName=roomName,
+            room=room_instance,
             content=data['message'])
         content = {
             'command': 'new_message',
@@ -62,10 +61,6 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        x = Room.objects.get(name=self.room_name)
-        x.counter = x.counter+1
-        x.save()
-
         self.accept()
 
     def disconnect(self, close_code):
@@ -73,10 +68,6 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-
-        x = Room.objects.get(name=self.room_name)
-        x.counter = x.counter-1
-        x.save()
 
     def receive(self, text_data):
         data = json.loads(text_data)

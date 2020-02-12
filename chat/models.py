@@ -17,7 +17,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.author.username
+        return "%s said %s in room: %s" % (self.author.username, self.content, self.room.name)
 
-    def last_10_messages(roomName):
-        return Message.objects.filter(room__name=roomName)[:10]
+    def last_10_messages(room_name):
+        return Message.objects.filter(room__name=room_name)[:10]

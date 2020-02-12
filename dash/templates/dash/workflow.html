@@ -212,7 +212,7 @@ function updateLessonProgress(lesson_id){
        <div class="container">
         <div class="row mb-1">
             <div class="col-sm-6 no-gutters">
-            <h4>Header</h4>
+            <small class="font-weight-bold">{{ lesson.title }} Chat</small>
              </div>
              <div class="col-sm-6 no-gutters">
                  <div class="float-right" onclick="closeForm()"><button type="button" class="btn btn-link"><i class="fas fa-times"></i></button></div>
@@ -220,37 +220,16 @@ function updateLessonProgress(lesson_id){
         </div>
        </div>
 
-        <div id="messages" class="message-content">
-            <!-- Received message -->
-            <div class="row p-2">
-                <div class="col-sm-12">
-                    <div class="received float-left bg-success text-white p-2 rounded">Test Message</div>
-                </div>
-                <div class="col-sm-12">
-                    <small class="text-muted align-middle float-left">10/02/2020 23:14</small>
-                </div>
-            </div>
-            <!-- Sent message-->
-            <div class="row p-2">
-                <div class="col-sm-12">
-                    <div class="sent float-right bg-primary text-white p-2 rounded">Test Message</div>
-                </div>
-                <div class="col-sm-12">
-                    <small class="text-muted align-middle float-right">10/02/2020 23:14</small>
-                </div>
-            </div>
-        </div>
-        <input id="chat-message-input" type="text" placeholder="Type message.." name="msg" required>
+        <div id="messages" class="message-content"></div>
+        <input id="chat-message-input" type="text" placeholder="Type message.." name="msg" required autocomplete="false">
     </div>
 </div>
 
 <script>
 
-(function(){
-    var x = document.querySelector("#messages");
-    console.log(x);
-    x.scrollTop = x.scrollHeight;
-})();
+function scrollMessage(){
+    $('#messages').scrollTop($('#messages')[0].scrollHeight - $('#messages')[0].clientHeight);
+}
 
 function openForm() {
     var x = document.querySelector("#messages");
@@ -278,12 +257,28 @@ function closeForm() {
     chatSocket.onmessage = function(e){
         var data = JSON.parse(e.data);
         if(data['command'] === 'messages'){
-            for(let i=0; i<data['messages'].length; i++){
-                createMessage(data['messages'][i]);
+            console.log(data['messages'].length);
+            if(data['messages'].length > 0){
+                for(let i=0; i<data['messages'].length; i++){
+                    createMessage(data['messages'][i]);
+                }
+            } else {
+                var other = document.createElement('div');
+                other.classList.add('row', 'p-2');
+                var other2 = document.createElement('div');
+                other2.classList.add('col-sm-12');
+                var noMessage = document.createElement('div');
+                noMessage.classList.add('bg-info', 'text-white', 'p-2', 'rounded');
+                noMessage.textContent = "No message activity here just yet. Start a conversation.";
+                other.appendChild(other2);
+                other2.appendChild(noMessage);
+                document.querySelector('#messages').appendChild(other);
             }
         } else if(data['command'] === 'new_message'){
             createMessage(data['message']);
-        }    
+        }
+        
+        scrollMessage();
     };
 
     function createMessage(data){
@@ -318,11 +313,11 @@ function closeForm() {
     };
 
     function fetchMessages(roomName){
+        console.log(roomName);
         chatSocket.send(JSON.stringify({'command': 'fetch_messages', 'roomName': roomName}));
     }
 
     document.querySelector('#chat-message-input').onkeyup = function(e) {
-        console.log(e.keyCode);
         if(e.keyCode === 13 && document.querySelector("#chat-message-input").value != ""){
             var x = document.querySelector("#messages");
             var messageInputDom = document.querySelector('#chat-message-input');
@@ -335,8 +330,6 @@ function closeForm() {
             }));
             x.scrollTop = x.scrollHeight;
             messageInputDom.value = '';
-        } else {
-            console.log("Failed to enter");
         }
     };
 </script>
@@ -372,7 +365,8 @@ function closeForm() {
 
     .message-content {
         max-height: 200px;
-        width: 100%;
+        min-height: 200px;
+        min-width: 100%;
         overflow-y: scroll;
         overflow-x: hidden;
         background-color: #f2f2f2;
