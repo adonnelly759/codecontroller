@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'notifications',
     'badges',
     'account',
-    'activity',
+    'activity.apps.ActivityConfig',
     'chat',
     'django_extensions',
     'django.contrib.admin',

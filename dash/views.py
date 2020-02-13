@@ -8,6 +8,7 @@ from badges.models import Trophies, Award
 from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from activity.models import Stream
 import json
 
 # Create your views here.
@@ -166,7 +167,7 @@ def trophy(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(a, 6)
+    paginator = Paginator(a, 3)
 
     try:
         a = paginator.page(page)
@@ -180,3 +181,19 @@ def trophy(request):
     }
 
     return render(request, 'dash/trophy.html', context)
+
+def activity(request):
+    s = Stream.objects.order_by('when').filter(actor=request.user)
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(s, 10)
+
+    try:
+        s = paginator.page(page)
+    except PageNotAnInteger:
+        s = paginator.page(1)
+    except EmptyPage:
+        s = paginator.page(paginator.num_pages)
+
+    return render(request, 'dash/activity.html', {'stream': s})

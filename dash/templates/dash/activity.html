@@ -1,0 +1,87 @@
+{% extends 'dash/base.html' %}
+{% block title %}Lessons{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button>
+    <a href="{% url 'dash:projects'%}"><button type="button" class="ml-2 btn btn-dark float-right">View Projects</button></a>
+  </div>  
+<div class="row">
+    <div class="activity-feed">
+        {% for s in stream %}
+        <div class="feed-item">
+            <div class="date">{{s.when}}</div>
+            <div class="text">{{s.user.firstname }} {{ s.verb }} {{ s.title }}</div>
+        </div>
+        {% endfor %}
+      </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-sm-12">
+        {% if stream.has_other_pages %}
+        <ul class="pagination justify-content-center">
+          {% if stream.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ stream.previous_page_number }}">Previous</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+          {% for i in stream.paginator.page_range %}
+            {% if stream.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only page-link">(current)</span></span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if stream.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ stream.next_page_number }}">Next</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+    </div>
+</div>
+
+<style>
+    @import url(http://fonts.googleapis.com/css?family=Open+Sans);
+/* apply a natural box layout model to all elements, but allowing components to change */
+
+.activity-feed {
+  padding: 15px;
+}
+.activity-feed .feed-item {
+  position: relative;
+  padding-bottom: 20px;
+  padding-left: 30px;
+  border-left: 2px solid #e4e8eb;
+}
+.activity-feed .feed-item:last-child {
+  border-color: transparent;
+}
+.activity-feed .feed-item:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #f37167;
+}
+.activity-feed .feed-item .date {
+  position: relative;
+  top: -5px;
+  color: #8c96a3;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+.activity-feed .feed-item .text {
+  position: relative;
+  top: -3px;
+}
+
+</style>
+{% endblock %} 
