@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
 from .models import Course, Lesson, LessonProgress, Quiz, QuizQuestion, QuizAnswer
+from badges.models import Trophies, Award
 from django.http import JsonResponse
 from django.utils.safestring import mark_safe
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 
 # Create your views here.
@@ -77,6 +79,35 @@ def checkAnswer(request):
 
     return JsonResponse(data)
 
+def awardBadge(request):
+    slug = request.GET.get('slug')
+    action = request.GET.get('action')
+    success = False
+
+    try:
+        itemTitle = Course.objects.get(s=slug).title
+    except:
+        itemTitle = Lesson.objects.get(s=slug).title
+
+    if Trophies.objects.filter(title=slug).exists():
+        print("at if")
+        t = Trophies.objects.get(title=slug)
+        a = Award.award_user(request.user, t)
+        success = True
+    else:
+        print("else")
+        t = Trophies.create_trophy(action=action, title=itemTitle)
+        new_t = Trophies.objects.get(title=itemTitle)
+        a = Award.award_user(request.user, new_t)
+        success = True
+
+
+    data = {
+        'success': success
+    }
+
+    return JsonResponse(data)
+
 def workflow(request, project, lesson):
     print(lesson)
     l = Lesson.objects.get(s=lesson)
@@ -129,3 +160,23 @@ def community(request):
         'username': mark_safe(json.dumps(request.user.username)),
     }
     return render(request, 'dash/community.html', context)
+
+def trophy(request):
+    a = Award.objects.order_by('-awarded').filter(user=request.user)
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(a, 6)
+
+    try:
+        a = paginator.page(page)
+    except PageNotAnInteger:
+        a = paginator.page(1)
+    except EmptyPage:
+        a = paginator.page(paginator.num_pages)
+
+    context = {
+        'award': a
+    }
+
+    return render(request, 'dash/trophy.html', context)

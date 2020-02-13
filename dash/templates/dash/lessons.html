@@ -2,7 +2,10 @@
 {% block title %}Lessons{% endblock %}
 {% block content %}
 <div class="container">
-  <div class="row"><button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button></div>  
+  <div class="row">
+    <button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button>
+    <a href="{% url 'dash:projects'%}"><button type="button" class="ml-2 btn btn-dark float-right">View Projects</button></a>
+  </div>  
 <div class="row">
 {% if lessons %}
   <div class="col-sm-12 mt-4">
@@ -87,10 +90,5 @@
   {% endif %}
   
 {% endif %}
-</div>
-<div class="row mb-4">
-  <div class="col-sm-12 mt-4">
-    <a href="{% url 'dash:projects'%}"><button type="button" class="btn btn-dark float-right">View Projects</button></a>
-  </div>
 </div>
 {% endblock %} 

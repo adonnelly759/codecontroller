@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('front.urls')),
     path('ajax/check-answer', dash.views.checkAnswer, name="check-answer"),
     path('ajax/update-progress', dash.views.updateLessonProgress, name="update-progress"),
+    path('ajax/award-badge', dash.views.awardBadge, name='award-badge'),
     path('chat/', include('chat.urls'))
 ]

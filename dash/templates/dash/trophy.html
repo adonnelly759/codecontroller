@@ -1,0 +1,156 @@
+{% extends 'dash/base.html' %}
+{% block title %}Trophies{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button>
+    <a href="{% url 'dash:projects'%}"><button type="button" class="ml-2 btn btn-dark float-right">View Projects</button></a>
+  </div>  
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <h4 class="text-dark font-weight-bold">Your trophies!</h4>
+  </div>
+</div>
+
+<div class="row">
+    {% if award %}
+        {% for a in award %}
+        <div class="col-sm-4">
+            <div class="trophy {{a.colour}}">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" width="216px" height="232px" viewBox="0 0 216 232">
+                    <path fill="#2B2B2B" d="M207,0C171.827,0.001,43.875,0.004,9.003,0c-5.619-0.001-9,3.514-9,9c0,28.23-0.006,151.375,0,169    c0.005,13.875,94.499,54,107.999,54S216,191.57,216,178V9C216,3.298,212.732,0,207,0z"/>
+            </svg>
+                <p class="title">{{ a.trophy.action|upper }}</p>
+                <p class="subtitle1">{{ a.awarded }}</p>
+                <p class="subtitle">{{ a.trophy.title }}</p>
+            </div>  
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-sm-4">
+            <div class="trophy gray">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" width="216px" height="232px" viewBox="0 0 216 232">
+                    <path fill="#2B2B2B" d="M207,0C171.827,0.001,43.875,0.004,9.003,0c-5.619-0.001-9,3.514-9,9c0,28.23-0.006,151.375,0,169    c0.005,13.875,94.499,54,107.999,54S216,191.57,216,178V9C216,3.298,212.732,0,207,0z"/>
+            </svg>
+                <p class="title">NOTHING</p>
+                <p class="subtitle1">No trophies yet!</p>
+                <p class="subtitle">Go earn some...</p>
+            </div>  
+        </div>
+    {% endif %}
+</div>
+
+<div class="row mt-4">
+    <div class="col-sm-12">
+        {% if award.has_other_pages %}
+        <ul class="pagination justify-content-center">
+          {% if award.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ award.previous_page_number }}">Previous</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+          {% for i in award.paginator.page_range %}
+            {% if award.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only page-link">(current)</span></span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if award.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ award.next_page_number }}">Next</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+    </div>
+</div>
+
+<style>
+@import "compass/css3";
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url(https://fonts.googleapis.com/css?family=Fjalla+One);
+.trophy {
+  position: relative;
+  width: 216px;
+  display: inline-block;
+  margin: 40px;
+}
+.trophy .title {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  font-size: 1.7em;
+  position: absolute;
+  top: -28px;
+  border-radius: 8px 8px 0 0;
+  text-align: center;
+  width: 100%;
+  background: red;
+  padding: 20px 0;
+}
+.trophy .subtitle {
+  position: absolute;
+  font-family: "Fjalla One", sans-serif;
+  font-size: 1.8em;
+  width: 100%;
+  text-align: center;
+  color: white;
+  position: absolute;
+  top: 100px;
+}
+
+.trophy .subtitle1 {
+  position: absolute;
+  font-family: "Fjalla One", sans-serif;
+  font-size: 1em;
+  width: 100%;
+  text-align: center;
+  color: white;
+  position: absolute;
+  top: 80px;
+}
+
+.trophy .subtitle:after {
+  content: "★ ★ ★";
+  display: block;
+  font-size: 0.4em;
+  position: relative;
+  margin: 15px 0 0;
+  transition: all 0.3s;
+}
+.trophy:hover .subtitle:after {
+  word-spacing: 30px;
+}
+.red .title {
+  background: #DC514E;
+}
+.red .subtitle:after {
+  color: #DC514E;
+}
+.green .title {
+  background: #2ecc71;
+}
+.green .subtitle:after {
+  color: #2ecc71;
+}
+.gray .title {
+  background: #95a5a6;
+}
+.gray .subtitle:after {
+  color: #95a5a6;
+}
+.yellow .title {
+  background: #f1c40f;
+}
+.yellow .subtitle:after {
+  color: #f1c40f;
+}
+.blue .title {
+  background: #3498db;
+}
+.blue .subtitle:after {
+  color: #3498db;
+}
+
+</style>
+{% endblock %} 

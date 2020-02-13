@@ -40,6 +40,7 @@
 </style>
 
 <script>
+    var slug = "{{ lesson.s|escapejs }}";
 
     $(document).ready(function(){
         // Hide badge card and next lesson
@@ -90,8 +91,28 @@ function checkAnswer(question_id, answer_id, lesson_id){
             $('#nextLesson').show();
             $('#showCorrect').fadeIn();
             updateLessonProgress(lesson_id);
+            awardBadge(slug);
         }
     }
+    });
+}
+
+function awardBadge(slug){
+    $.ajax({
+        url: '/ajax/award-badge',
+        data: {
+            'slug': slug,
+            'action': 'completed'
+        },
+        type: 'get',
+        dataType: 'json',
+        success: function(data){
+            if(data.success){
+                console.log("Awarded new trophy to user")
+            } else {
+                console.error("Failed to award new trophy")
+            }
+        }
     });
 }
 
