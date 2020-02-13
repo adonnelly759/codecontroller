@@ -122,3 +122,10 @@ def updateLessonProgress(request):
         }
 
     return JsonResponse(data)
+
+def community(request):
+    context = {
+        'room_name': mark_safe(json.dumps("community")),
+        'username': mark_safe(json.dumps(request.user.username)),
+    }
+    return render(request, 'dash/community.html', context)

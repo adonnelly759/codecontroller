@@ -184,7 +184,7 @@ display:none;
           <span>Activity</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="">
+        <a class="nav-link" href="{% url 'dash:community' %}">
           <i class="fas fa-hands-helping"></i>
           <span>Community</span></a>
       </li>
@@ -195,24 +195,17 @@ display:none;
       </li>
     </ul>
 
-    <div id="content-wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
 
-      <div class="container-fluid">
+      <div id="content" class="container-fluid">
         
         {% block content %}{% endblock%}
-
+        
         </div>
-      </div>
       <!-- /.container-fluid -->
 
-      <!-- Sticky Footer -->
-      <footer class="sticky-footer mt-4">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright © CodeController 2019</span>
-          </div>
-        </div>
-      </footer>
+
+    </div>
 
     </div>
     <!-- /.content-wrapper -->

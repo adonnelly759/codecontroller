@@ -1,0 +1,203 @@
+{% extends 'dash/base.html' %}
+{% block title %}Community{% endblock %}
+{% block content %} 
+<div class="container">
+    <div class="row mb-2">
+        Content for community
+    </div>
+    <div class="row form-container">
+        <div id="messages" class="message-content mb-2"></div>
+        <input id="chat-message-input" type="text" placeholder="Type message.." name="msg" required autocomplete="off">
+    </div>
+</div>
+
+<script>
+
+    function scrollMessage(){
+        $('#messages').scrollTop($('#messages')[0].scrollHeight - $('#messages')[0].clientHeight);
+    }
+    
+    function openForm() {
+        var x = document.querySelector("#messages");
+        x.scrollTop = x.scrollHeight;
+      document.getElementById("myForm").style.display = "block";
+    }
+    
+    function closeForm() {
+      document.getElementById("myForm").style.display = "none";
+    }
+    </script>
+    
+    <script>
+        var roomName = {{ room_name }};
+        var username = {{ username }}
+    
+        var chatSocket = new ReconnectingWebSocket(
+            'ws://' + window.location.host +
+            '/ws/chat/' + roomName + '/');
+    
+        chatSocket.onopen = function(e){
+            fetchMessages(roomName);
+        };
+    
+        chatSocket.onmessage = function(e){
+            var data = JSON.parse(e.data);
+            if(data['command'] === 'messages'){
+                console.log(data['messages'].length);
+                if(data['messages'].length > 0){
+                    for(let i=0; i<data['messages'].length; i++){
+                        createMessage(data['messages'][i]);
+                    }
+                } else {
+                    var other = document.createElement('div');
+                    other.classList.add('row', 'p-2');
+                    var other2 = document.createElement('div');
+                    other2.classList.add('col-sm-12');
+                    var noMessage = document.createElement('div');
+                    noMessage.classList.add('bg-info', 'text-white', 'p-2', 'rounded');
+                    noMessage.textContent = "No message activity here just yet. Start a conversation.";
+                    other.appendChild(other2);
+                    other2.appendChild(noMessage);
+                    document.querySelector('#messages').appendChild(other);
+                }
+            } else if(data['command'] === 'new_message'){
+                createMessage(data['message']);
+            }
+            
+            $('[data-toggle="tooltip"]').tooltip();
+            scrollMessage();
+        };
+    
+        function createMessage(data){
+            var author = data['author'];
+            var new_row = document.createElement('div');
+            new_row.classList.add('row', 'p-2');
+            var new_col = document.createElement('div');
+            new_col.classList.add('col-sm-12');
+            var new_message = document.createElement('div');
+            var new_time = document.createElement('div');
+            new_time.classList.add('col-sm-12');
+            var small = document.createElement('small')
+            new_message.textContent = data.content;
+            new_message.setAttribute('data-toggle', 'tooltip');
+            new_message.setAttribute('title', "Message by " + data.author);
+            small.textContent = data.timestamp;
+            if(author == username){
+                new_message.classList.add('sent', 'float-right', 'bg-primary', 'text-white', 'p-2', 'rounded');
+                new_message.setAttribute('data-placement', 'left');
+                small.classList.add('text-muted', 'align-middle', 'float-right');
+            } else {
+                new_message.classList.add('received', 'float-left', 'bg-success', 'text-white', 'p-2', 'rounded');
+                new_message.setAttribute('data-placement', 'right');
+            }
+            
+            new_row.appendChild(new_col);
+            new_col.appendChild(new_message);
+            new_row.appendChild(new_time);
+            new_time.appendChild(small);
+            document.querySelector('#messages').appendChild(new_row);
+        }
+    
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    
+        function fetchMessages(roomName){
+            chatSocket.send(JSON.stringify({'command': 'fetch_messages', 'roomName': roomName}));
+        }
+    
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if(e.keyCode === 13 && document.querySelector("#chat-message-input").value != ""){
+                var x = document.querySelector("#messages");
+                var messageInputDom = document.querySelector('#chat-message-input');
+                var message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({
+                    'command': 'new_message',
+                    'message': message,
+                    'from': username,
+                    'roomName': roomName
+                }));
+                x.scrollTop = x.scrollHeight;
+                messageInputDom.value = '';
+            }
+        };
+    </script>
+
+<style>
+    body 
+    * {box-sizing: border-box;}
+
+    #messages {
+        min-width: 100%;
+        height: 70vh;
+        min-height:initial;
+    }
+
+    
+    /* Button used to open the chat form - fixed at the bottom of the page */
+    .open-button {
+      background-color: #555;
+      color: white;
+      padding: 16px 20px;
+      border: none;
+      cursor: pointer;
+      opacity: 0.8;
+      position: fixed;
+      bottom: 23px;
+      right: 23px;
+      width: 150px;
+    }
+    
+    /* The popup chat - hidden by default */
+    .chat-popup {
+      display: none;
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      border: 3px solid #f1f1f1;
+      z-index: 9;
+    }
+
+    .message-content {
+        min-width: 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        background-color: #f2f2f2;
+    }
+    
+    /* Add styles to the form container */
+    .form-container {
+      min-width: 100%;
+      padding: 10px;
+      background-color: white;
+    }
+    
+    /* Full-width textarea */
+    .form-container input {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      background: #f1f1f1;
+      resize: none;
+    }
+    
+    /* When the textarea gets focus, do something */
+    .form-container textarea:focus {
+      background-color: #ddd;
+      outline: none;
+    }
+    
+    /* Set a style for the submit/send button */
+    
+    /* Add a red background color to the cancel button */
+    .form-container .cancel {
+      background-color: red;
+    }
+    
+    /* Add some hover effects to buttons */
+    .form-container .btn:hover, .open-button:hover {
+      opacity: 1;
+    }
+    </style>
+
+{% endblock %}

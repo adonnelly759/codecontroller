@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'utils',
     'channels',
     'notifications',
-    'community',
     'badges',
     'account',
     'activity',

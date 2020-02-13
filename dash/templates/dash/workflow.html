@@ -278,35 +278,39 @@ function closeForm() {
             createMessage(data['message']);
         }
         
+        $('[data-toggle="tooltip"]').tooltip();
         scrollMessage();
     };
 
     function createMessage(data){
-        var author = data['author'];
-        var new_row = document.createElement('div');
-        new_row.classList.add('row', 'p-2')
-        var new_col = document.createElement('div');
-        new_col.classList.add('col-sm-12');
-        var new_message = document.createElement('div');
-        var new_time = document.createElement('div');
-        new_time.classList.add('col-sm-12');
-        var small = document.createElement('small')
-        new_message.textContent = data.content;
-        small.textContent = data.timestamp;
-        if(author == username){
-            new_message.classList.add('sent', 'float-right', 'bg-primary', 'text-white', 'p-2', 'rounded');
-            small.classList.add('text-muted', 'align-middle', 'float-right');
-        } else {
-            new_message.classList.add('received', 'float-left', 'bg-success', 'text-white', 'p-2', 'rounded');
-            small.classList.add('text-muted', 'align-middle', 'float-left');
+            var author = data['author'];
+            var new_row = document.createElement('div');
+            new_row.classList.add('row', 'p-2');
+            var new_col = document.createElement('div');
+            new_col.classList.add('col-sm-12');
+            var new_message = document.createElement('div');
+            var new_time = document.createElement('div');
+            new_time.classList.add('col-sm-12');
+            var small = document.createElement('small')
+            new_message.textContent = data.content;
+            new_message.setAttribute('data-toggle', 'tooltip');
+            new_message.setAttribute('title', "Message by " + data.author);
+            small.textContent = data.timestamp;
+            if(author == username){
+                new_message.classList.add('sent', 'float-right', 'bg-primary', 'text-white', 'p-2', 'rounded');
+                new_message.setAttribute('data-placement', 'left');
+                small.classList.add('text-muted', 'align-middle', 'float-right');
+            } else {
+                new_message.classList.add('received', 'float-left', 'bg-success', 'text-white', 'p-2', 'rounded');
+                new_message.setAttribute('data-placement', 'right');
+            }
+            
+            new_row.appendChild(new_col);
+            new_col.appendChild(new_message);
+            new_row.appendChild(new_time);
+            new_time.appendChild(small);
+            document.querySelector('#messages').appendChild(new_row);
         }
-        
-        new_row.appendChild(new_col)
-        new_col.appendChild(new_message)
-        new_row.appendChild(new_time)
-        new_time.appendChild(small)
-        document.querySelector('#messages').appendChild(new_row)
-    }
 
     chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
