@@ -183,7 +183,7 @@ def trophy(request):
     return render(request, 'dash/trophy.html', context)
 
 def activity(request):
-    s = Stream.objects.order_by('when').filter(actor=request.user)
+    s = Stream.objects.order_by('-when').filter(actor=request.user)
 
     page = request.GET.get('page', 1)
 
@@ -197,3 +197,6 @@ def activity(request):
         s = paginator.page(paginator.num_pages)
 
     return render(request, 'dash/activity.html', {'stream': s})
+
+def notifications(request):
+    return render(request, 'dash/notifications.html', {})

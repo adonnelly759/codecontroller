@@ -69,7 +69,7 @@ display:none;
         throw "File not found: '" + x + "'";
     return Sk.builtinFiles["files"][x];
   }
-  // Here's everything you need to run a python program in skulpt
+  // Here's everything you need to run a python program in 
   // grab the code from your textarea
   // get a reference to your pre element for output
   // configure the output function
@@ -112,30 +112,21 @@ display:none;
 
 
 
+
     <!-- Navbar -->
     <ul class="navbar-nav ml-auto mr-0 mr-md-3 my-2 my-md-0">
       <li class="nav-item dropdown no-arrow mx-1">
         <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="badge badge-danger">{{ total_notification }}</span>
           <i class="fas fa-bell fa-fw"></i>
-          <span class="badge badge-danger">9+</span>
         </a>
+
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
+          {% for n in prev_n %}
+            <a class="dropdown-item" href="#">{{ n.content }}<small> {{ n.get_date }}</small></a>
+          {% endfor %}
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown no-arrow mx-1">
-        <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-envelope fa-fw"></i>
-          <span class="badge badge-danger">7</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="messagesDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
+          <a class="dropdown-item" href="{% url 'dash:notifications' %}">View all notifcations</a>
         </div>
       </li>
       <li class="nav-item dropdown no-arrow">
@@ -150,6 +141,8 @@ display:none;
         </div>
       </li>
     </ul>
+
+   
 
   </nav>
 

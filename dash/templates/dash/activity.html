@@ -11,7 +11,7 @@
         {% for s in stream %}
         <div class="feed-item">
             <div class="date">{{s.when}}</div>
-            <div class="text">{{s.user.firstname }} {{ s.verb }} {{ s.title }}</div>
+            <div class="text">You {{ s.verb }} {{ s.title }}</div>
         </div>
         {% endfor %}
       </div>

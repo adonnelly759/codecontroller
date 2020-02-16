@@ -12,5 +12,6 @@ urlpatterns = [
     path('<project>/<lesson>', views.workflow, name="project-lesson"),
     path('trophies', views.trophy, name='trophies'),
     path('community', views.community, name='community'),
-    path('activity', views.activity, name="activity")
+    path('activity', views.activity, name="activity"),
+    path('notifications', views.notifications, name='notifications')
 ]

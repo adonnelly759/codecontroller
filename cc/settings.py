@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'front',
     'utils',
     'channels',
-    'notifications',
+    'notifications.apps.NotificationsConfig',
     'badges',
     'account',
     'activity.apps.ActivityConfig',
@@ -88,6 +88,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dash.context_processors.notification_count',
+                'dash.context_processors.get_five_notifications'
             ],
         'libraries': {
             'split_answers': 'dash.templatetags.quiz_extras',
