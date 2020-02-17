@@ -3,6 +3,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from badges.models import Award
 from dash.models import Course
+from account.models import Account
 from .models import Notification
 
 # Welome notification
@@ -26,4 +27,12 @@ def notify_course(sender, instance, created, **kwargs):
                 user = user,
                 content = "A new course has been added: %s!" % (instance.title)
         )
-        print("Notification sent!")
+
+# New User created
+@receiver(post_save, sender=Account)
+def notify_user(sender, instance, created, **kwards):
+    if created:
+        Notification.new(
+            user = instance.user,
+            content = "Welcome to CodeController! We hope you learn a lot and can make use of your knew knowledge."
+        )

@@ -27,6 +27,130 @@
 <script src="{% static 'main.js' %}"></script>
 <script src="{% static 'reconnecting-websocket.js' %}"></script>
 
+<script>
+  function markRead(){
+    x = Boolean($("#alertsDropdown").attr("aria-expanded"))
+
+    if(x){
+      $.ajax({
+        url: '/ajax/view-notifications',
+        data: {
+            'user': '{{request.user|escapejs}}'
+        },
+        type: 'get',
+        dataType: 'json',
+        success: function (data) {
+          if (data.correct) {
+            $("#nCount").text("0");
+          }
+        }
+      });
+    }
+  }
+
+  var counter = 0;
+  var oldNote = 0
+
+  function getNotification(){
+    $.ajax({
+      url: '/ajax/get-notifications',
+      type: 'get',
+      dataType: 'json',
+      success: function(data){
+        $('#nCount').text(data.count);
+        if(data.count > 0){
+          if(oldNote == 0){
+            for(let i = 0; i<data["notify"].length; i++){
+              var child = document.getElementById('new-note');
+              document.getElementById("alertsDropdown1").removeChild(child)
+              getNewNotification(data["notify"][i]);
+              oldNote++;
+              
+          }
+          }
+        } else {
+          if(counter == 0){
+            var parent = document.getElementById('alertsDropdown1');
+            var a = document.createElement('a');
+            a.classList.add('dropdown-item');
+            a.setAttribute('id', 'new-note');
+            a.setAttribute('href', '#');
+            a.textContent = "No new notifications";
+            var small = document.createElement('small');
+
+            a.appendChild(small)
+            parent.insertBefore(a, parent.firstChild); 
+            counter++;
+            oldNote = 0;
+          } 
+        }
+      }
+    });
+  }
+
+  $(document).ready(function(){
+    setInterval(getNotification, 10000);
+  });
+
+  function getNewNotification(data){
+    var parent = document.getElementById('alertsDropdown1');
+    var a = document.createElement('a');
+    a.classList.add('dropdown-item');
+    a.setAttribute('href', '#');
+    a.textContent = data.content;
+    var small = document.createElement('small');
+    small.textContent = data.when;
+
+    a.appendChild(small)
+    parent.insertBefore(a, parent.firstChild);
+  }
+
+  function createToast(data){
+    var toast = document.createElement('div');
+    toast.setAttribute('id', 'new-toast');
+    toast.classList.add('toast');
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.setAttribute('data-autohide', 'false');
+    toast.setAttribute('style', 'position: absolute; top: 0; right: 0;');
+
+    var toastHeader = document.createElement('div');
+    toastHeader.classList.add('toast-header');
+
+    var str = document.createElement('strong');
+    str.classList.add('mr-auto');
+    str.textContent = "Notification";
+
+    var sml = document.createElement('small');
+    sml.classList.add('text-muted');
+    sml.textContent = "Sent .....";
+
+    var btn = document.createElement('button');
+    btn.classList.add('ml-2', 'mb-1', 'close');
+    btn.setAttribute('type', 'button');
+    btn.setAttribute('data-dismiss', 'toast');
+    btn.setAttribute('aria-label', 'Close');
+
+    var span = document.createElement('span');
+    span.setAttribute('aria-hidden', 'true');
+    span.textContent = '&times;';
+
+    var content = document.createElement('div');
+    content.classList.add('toast-body');
+    content.textContent = 'hello';
+
+    toast.appendChild(toastHeader);
+    toastHeader.appendChild(str);
+    toastHeader.appendChild(sml);
+    toastHeader.appendChild(btn);
+    btn.appendChild(span);
+    toastHeader.appendChild(content);
+    document.getElementById('toastContent').appendChild(toast);
+
+  }
+</script>
+
   <!-- Quiz css -->
   <link href="{% static 'dash/css/quiz.css' %}">
   <script src="{% static 'dash/js/quiz.js' %}"></script>
@@ -116,12 +240,12 @@ display:none;
     <!-- Navbar -->
     <ul class="navbar-nav ml-auto mr-0 mr-md-3 my-2 my-md-0">
       <li class="nav-item dropdown no-arrow mx-1">
-        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="badge badge-danger">{{ total_notification }}</span>
+        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" onclick="markRead()" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span id="nCount" class="badge badge-danger">{{ total_notification }}</span>
           <i class="fas fa-bell fa-fw"></i>
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">
+        <div id="alertsDropdown1" class="dropdown-menu dropdown-menu-right newNotifications" aria-labelledby="alertsDropdown">
           {% for n in prev_n %}
             <a class="dropdown-item" href="#">{{ n.content }}<small> {{ n.get_date }}</small></a>
           {% endfor %}
@@ -145,6 +269,8 @@ display:none;
    
 
   </nav>
+
+
 
   <div id="wrapper">
 
@@ -193,12 +319,16 @@ display:none;
       <div id="content" class="container-fluid">
         
         {% block content %}{% endblock%}
+
+        
         
         </div>
       <!-- /.container-fluid -->
 
 
     </div>
+
+    <div id="toastContent"></div>
 
     </div>
     <!-- /.content-wrapper -->

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import Truncator, slugify
 from django.contrib.auth.models import User
+from tinymce.models import HTMLField
 import uuid
 
 # Create your models here.
@@ -22,7 +23,7 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     title = models.CharField(max_length=255)
-    content = models.TextField() # Lesson content 
+    content = HTMLField() # Lesson content 
     code = models.TextField() # Original code for the user to work with
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     s = models.SlugField(unique=True)    
@@ -57,6 +58,11 @@ class LessonProgress(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.user.get_full_name(), self.lesson.title)
+
+    def percent(self):
+        total = LessonProgress.objects.filter(lesson__course=self.lesson.course, user=self.user).count()
+        done = LessonProgress.objects.filter(lesson__course=self.lesson.course, user=self.user, completed=True).count()
+        return (done/total)*100
 
     class Meta:
         verbose_name_plural = "Lesson Progression"

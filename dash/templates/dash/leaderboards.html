@@ -1,0 +1,65 @@
+{% extends 'dash/base.html' %}
+{% block title %}Leaderboards{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button>
+    <a href="{% url 'dash:projects'%}"><button type="button" class="ml-2 btn btn-dark float-right">View Projects</button></a>
+  </div>  
+
+  <div class="col-sm-12 mt-4">
+    <h4 class="text-dark font-weight-bold">Leaderboards</h4>
+  </div>
+<div class="row">
+    <div class="col-sm-12 mt-2">
+        <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Total Badges</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for l in leaderboards %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ l.user__first_name }}</td>
+                    <td>{{ l.user__last_name }}</td>
+                    <td>{{ l.total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>    
+</div>
+
+<div class="row mt-4">
+    <div class="col-sm-12">
+        {% if leaderboards.has_other_pages %}
+        <ul class="pagination justify-content-center">
+          {% if leaderboards.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ leaderboards.previous_page_number }}">Previous</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+          {% for i in leaderboards.paginator.page_range %}
+            {% if leaderboards.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only page-link">(current)</span></span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if leaderboards.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ leaderboards.next_page_number }}">Next</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+    </div>
+</div>
+
+</div>
+{% endblock %} 

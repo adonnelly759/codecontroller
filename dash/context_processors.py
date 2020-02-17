@@ -1,4 +1,6 @@
 from notifications.models import Notification
+from badges.models import Award
+from django.db.models import Count
 
 def notification_count(request):
     try:
@@ -28,5 +30,14 @@ def get_five_notifications(request):
         return {
             'prev_n': None
         }
+
+def leaderboardPos(request):
+    l = Award.objects.values('user', 'user__first_name', 'user__last_name').order_by('-total').annotate(total=Count('id'))
+
+    for index, item in enumerate(l):
+        if item['user'] == request.user.id:
+            return {
+                'lb_pos': index+1
+            }
 
     

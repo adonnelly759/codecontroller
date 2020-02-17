@@ -3,55 +3,39 @@
 {% block content %}
         <!-- Icon Cards-->
         <div class="row">
-            <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="col-xl-4 col-sm-6 mb-3">
               <div class="card text-white bg-primary o-hidden h-100">
                 <div class="card-body">
                   <div class="card-body-icon">
                     <i class="fas fa-fire"></i>
                   </div>
-                  <div class="mr-5">1 Day Streak!</div>
+                  <div class="mr-5">#{{lb_pos}} on CodeController!</div>
                 </div>
-                <a class="card-footer text-white clearfix small z-1" href="#">
-                  <span class="float-left">View Details</span>
+                <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:leaderboards' %}">
+                  <span class="float-left">View Leaderboards</span>
                   <span class="float-right">
                     <i class="fas fa-angle-right"></i>
                   </span>
                 </a>
               </div>
             </div>
-            <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="col-xl-4 col-sm-6 mb-3">
               <div class="card text-white bg-warning o-hidden h-100">
                 <div class="card-body">
                   <div class="card-body-icon">
                     <i class="fas fa-fw fa-list"></i>
                   </div>
-                  <div class="mr-5">11 New Tasks!</div>
+                  <div class="mr-5">Discuss with the community</div>
                 </div>
-                <a class="card-footer text-white clearfix small z-1" href="#">
-                  <span class="float-left">View Details</span>
+                <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:community' %}">
+                  <span class="float-left">Talk now!</span>
                   <span class="float-right">
                     <i class="fas fa-angle-right"></i>
                   </span>
                 </a>
               </div>
             </div>
-            <div class="col-xl-3 col-sm-6 mb-3">
-              <div class="card text-white bg-success o-hidden h-100">
-                <div class="card-body">
-                  <div class="card-body-icon">
-                    <i class="fas fa-hand-spock"></i>
-                  </div>
-                  <div class="mr-5">4 New Lessons!</div>
-                </div>
-                <a class="card-footer text-white clearfix small z-1" href="#">
-                  <span class="float-left">View Details</span>
-                  <span class="float-right">
-                    <i class="fas fa-angle-right"></i>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="col-xl-4 col-sm-6 mb-3">
               <div class="card text-white bg-danger o-hidden h-100">
                 <div class="card-body">
                   <div class="card-body-icon">
@@ -59,7 +43,7 @@
                   </div>
                   <div class="mr-5">1 Unfinished Project!</div>
                 </div>
-                <a class="card-footer text-white clearfix small z-1" href="#">
+                <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:projects' %}">
                   <span class="float-left">View Details</span>
                   <span class="float-right">
                     <i class="fas fa-angle-right"></i>
@@ -84,9 +68,6 @@
                       </div>
                       <div class="mr-5 font-weight-bold text-center text-underline">{{ course.title }}</div>
                       <div class="mr-5">{{ course.short }}</div>
-                      <div class="mr-5 progress">
-                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                      </div>
                     </div>
                     <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:project-slug' course.s %}">
                       <span class="float-left">View {{ course.title }}</span>

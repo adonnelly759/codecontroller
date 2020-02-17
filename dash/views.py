@@ -9,6 +9,8 @@ from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from activity.models import Stream
+from notifications.models import Notification
+from django.db.models import Count
 import json
 
 # Create your views here.
@@ -182,6 +184,7 @@ def trophy(request):
 
     return render(request, 'dash/trophy.html', context)
 
+# Render activity view
 def activity(request):
     s = Stream.objects.order_by('-when').filter(actor=request.user)
 
@@ -198,5 +201,75 @@ def activity(request):
 
     return render(request, 'dash/activity.html', {'stream': s})
 
+# Render notification view
 def notifications(request):
-    return render(request, 'dash/notifications.html', {})
+    n = Notification.objects.order_by('-sent').filter(user=request.user)
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(n, 5)
+
+    try:
+        n = paginator.page(page)
+    except PageNotAnInteger:
+        n = paginator.page(1)
+    except EmptyPage:
+        n = paginator.page(paginator.num_pages)
+
+    return render(request, 'dash/notifications.html', {'notifications': n})
+
+# Ajax notification to update
+def notificationSeen(request):
+    user = request.user
+
+    try:
+        notifications = Notification.objects.filter(seen=False, user=user)
+        for n in notifications:
+            n.seen = True
+            n.save()
+    except Exception:
+        print("Failed")
+
+    data = {
+        'correct': True
+    }
+
+    return JsonResponse(data)
+
+def getNotifications(request):
+    user = request.user
+    result = []
+    try:
+        n = Notification.objects.order_by('sent').filter(seen=False, user=user)
+    except Exception:
+        print("Failed")
+
+    for notifications in n:
+        result.append({
+            'content': notifications.content,
+            'when': notifications.get_date()
+        })
+
+    data = {
+        'correct': True,
+        'notify': result,
+        'count': n.count()
+    }
+
+    return JsonResponse(data)
+
+# Leaderboards
+def leaderboards(request):
+    l = Award.objects.values('user', 'user__first_name', 'user__last_name').order_by('-total').annotate(total=Count('id'))
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(l, 10)
+
+    try:
+        l = paginator.page(page)
+    except PageNotAnInteger:
+        l = paginator.page(1)
+    except EmptyPage:
+        l = paginator.page(paginator.num_pages)
+
+    return render(request, 'dash/leaderboards.html', {'leaderboards': l})

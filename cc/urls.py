@@ -25,5 +25,8 @@ urlpatterns = [
     path('ajax/check-answer', dash.views.checkAnswer, name="check-answer"),
     path('ajax/update-progress', dash.views.updateLessonProgress, name="update-progress"),
     path('ajax/award-badge', dash.views.awardBadge, name='award-badge'),
+    path('ajax/view-notifications', dash.views.notificationSeen, name='notification-seen'),
+    path('ajax/get-notifications', dash.views.getNotifications, name='getNotifications'),
     path('chat/', include('chat.urls')),
+    path('tinymce/', include('tinymce.urls')),
 ]

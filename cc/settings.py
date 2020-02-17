@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'account',
     'activity.apps.ActivityConfig',
     'chat',
+    'tinymce',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -89,11 +90,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'dash.context_processors.notification_count',
-                'dash.context_processors.get_five_notifications'
+                'dash.context_processors.get_five_notifications',
+                'dash.context_processors.leaderboardPos',
             ],
         'libraries': {
-            'split_answers': 'dash.templatetags.quiz_extras',
-
+            'split_answers': 'dash.templatetags.quiz_extras'
             }
         },
     },

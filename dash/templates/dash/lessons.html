@@ -20,7 +20,7 @@
               <i class="far fa-question-circle"></i>
             </div>
             <div class="mr-5 font-weight-bold text-center text-underline">{{ lp.lesson.title }}</div>
-            <div class="mr-5">{{ lp.lesson.short }}</div>
+            <div class="mr-5">{{ lp.lesson.short|safe }}</div>
           </div>
           <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:project-lesson' lp.lesson.course.s lp.lesson.s %}">
             <span class="float-left">Take {{ lp.lesson.title }}</span>
@@ -38,7 +38,7 @@
               <i class="fas fa-spell-check"></i>
             </div>
             <div class="mr-5 font-weight-bold text-center text-underline">{{ lp.lesson.title }}</div>
-            <div class="mr-5">{{ lp.lesson.short }}</div>
+            <div class="mr-5">{{ lp.lesson.short|safe }}</div>
           </div>
           <a class="card-footer text-white clearfix small z-1" href="{% url 'dash:project-lesson' lp.lesson.course.s lp.lesson.s %}">
             <span class="float-left">Retake {{ lp.lesson.title }}</span>

@@ -13,5 +13,6 @@ urlpatterns = [
     path('trophies', views.trophy, name='trophies'),
     path('community', views.community, name='community'),
     path('activity', views.activity, name="activity"),
-    path('notifications', views.notifications, name='notifications')
+    path('notifications', views.notifications, name='notifications'),
+    path('leaderboards', views.leaderboards, name="leaderboards")
 ]
