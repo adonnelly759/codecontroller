@@ -39,3 +39,13 @@ def chat_message(sender, instance, created, **kwards):
             title=instance.room.name,
             link="#"
         )
+
+# Signal for settings change#
+@receiver(post_save, sender=User)
+def user_update(sender, instance, created, **kwargs):
+    Stream.new(
+            actor=instance,
+            verb="updated profile settings",
+            title="in Account",
+            link="#"
+        )

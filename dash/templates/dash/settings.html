@@ -1,0 +1,61 @@
+{% extends 'dash/base.html' %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <button class="btn btn-info" onclick="history.back(-1);"><i class="fas fa-arrow-left"></i> Go back</button>
+    <a href="{% url 'dash:index'%}"><button type="button" class="ml-2 btn btn-dark float-right">Dashboard</button></a>
+  </div>  
+<div class="row">
+  <div class="col-sm-12 mt-4">
+    <h4 class="text-dark font-weight-bold">Your settings!</h4>
+  </div>
+</div>
+
+{% if messages %}
+<div class="row">
+    <div class="col-sm-12">
+                {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible"{% endif %}>{{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                    </div>
+                {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        {{ form.email }}
+                        <small id="emailHelp" class="form-text text-muted float-right text-danger">We'll never share your email with anyone else.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">First name</label>
+                        {{ form.first_name }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Last name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary float-right">Update Info</button> 
+            <a href="{% url 'dash:password-change' %}">Change Password</a>
+        </form>  
+    </div>
+</div>
+{% endblock %}

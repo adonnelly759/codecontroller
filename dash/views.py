@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -11,6 +11,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from activity.models import Stream
 from notifications.models import Notification
 from django.db.models import Count
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from .forms import EditProfileForm, EditPasswordForm
 import json
 
 # Create your views here.
@@ -273,3 +276,38 @@ def leaderboards(request):
         l = paginator.page(paginator.num_pages)
 
     return render(request, 'dash/leaderboards.html', {'leaderboards': l})
+
+def settings(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.info(request, "Updated profile successfully!")
+            return redirect('/dash/settings')
+        else:
+            messages.error(request, "Failed to update profile!")
+            return redirect('/dash/settings')
+    else:
+        form = EditProfileForm(instance=request.user)
+        context = {
+            'form': form
+        }
+    return render(request, 'dash/settings.html', context)
+
+@login_required
+def password_settings(request):
+    if request.method == 'POST':
+        form = EditPasswordForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect(reverse('dash:password-change'))
+        else:
+            messages.warning(request, 'Please correct the error below.')
+    else:
+        form = EditPasswordForm(request.user)
+    return render(request, 'dash/password-change.html', {
+        'form': form
+    })

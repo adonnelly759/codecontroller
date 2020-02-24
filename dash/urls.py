@@ -14,5 +14,7 @@ urlpatterns = [
     path('community', views.community, name='community'),
     path('activity', views.activity, name="activity"),
     path('notifications', views.notifications, name='notifications'),
-    path('leaderboards', views.leaderboards, name="leaderboards")
+    path('leaderboards', views.leaderboards, name="leaderboards"),
+    path('settings', views.settings, name='settings'),
+    path('password', views.password_settings, name='password-change')
 ]
