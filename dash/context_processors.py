@@ -37,8 +37,12 @@ def leaderboardPos(request):
                 return {
                     'lb_pos': index+1
                 }
+            else:
+                return {
+                    'lb_pos': '999'
+                }
     else:
-        return {}
+        return {'lb_pos': '999'}
 
 
     

@@ -29,9 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.141', '10.107.20.250', '10.107.54.254']
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 # Channels
 ASGI_APPLICATION = 'cc.routing.application'
 CHANNEL_LAYERS = {
@@ -46,6 +43,13 @@ CHANNEL_LAYERS = {
 # Application definition
 
 INSTALLED_APPS = [
+    'django_extensions',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'dash',
     'editor',
     'front',
@@ -57,13 +61,7 @@ INSTALLED_APPS = [
     'activity.apps.ActivityConfig',
     'chat',
     'tinymce',
-    'django_extensions',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -154,3 +152,28 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Email Config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_POST = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nrcodecontroller@gmail.com'
+EMAIL_HOST_PASSWORD = "Easter12"
+CKEDITOR_CONFIGS = { 'default': 
+                         { 'toolbar': 'Custom', 'height': 500, 'toolbar_Custom': 
+                             [ 
+                                 ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'], 
+                                 ['Link', 'Unlink', 'Anchor'], 
+                                 ['Image', 'Flash', 'Table', 'HorizontalRule'], 
+                                 ['TextColor', 'BGColor'], 
+                                 ['Smiley', 'SpecialChar'], 
+                                 ['Source'], 
+                             ], 
+                           }, 'special': 
+                    { 'toolbar': 'Special', 'toolbar_Special': 
+                            [ 
+                             ['Bold'], ['Link'], ['Unlink'], ['Image'], ['CodeSnippet'], 
+                            ], 'extraPlugins': 'codesnippet',
+                          } 
+                     }

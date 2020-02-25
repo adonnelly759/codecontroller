@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.contrib.auth import views as auth_views
 import dash.views
+import front.views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('dash/', include('dash.urls')),
     path('editor', include('editor.urls')),
     path('', include('front.urls')),
@@ -29,4 +30,5 @@ urlpatterns = [
     path('ajax/get-notifications', dash.views.getNotifications, name='getNotifications'),
     path('chat/', include('chat.urls')),
     path('tinymce/', include('tinymce.urls')),
+    path('admin/', admin.site.urls),
 ]

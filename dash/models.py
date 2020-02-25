@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import Truncator, slugify
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
+from ckeditor.fields import RichTextField
 import uuid
 
 # Create your models here.
@@ -23,8 +24,8 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     title = models.CharField(max_length=255)
-    content = HTMLField() # Lesson content 
-    code = models.TextField() # Original code for the user to work with
+    content = RichTextField(blank=True, null=True, config_name="special")
+    shortDesc = models.CharField(max_length=255)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     s = models.SlugField(unique=True)    
 
@@ -32,7 +33,7 @@ class Lesson(models.Model):
         return "%s - %s" % (self.title, self.course.title)
 
     def short(self):
-        return Truncator(self.content).chars(50)
+        return Truncator(self.shortDesc).chars(50)
 
     def save(self, *args, **kwargs):
         self.s = slugify(self.title)

@@ -77,7 +77,8 @@ function checkAnswer(question_id, answer_id, lesson_id){
     success: function (data) {
         if (data.correct) {
             correct++;
-            console.log(correct)
+            console.log(correct);
+            console.log(data.max);
             $("label[for='customRadio"+answer_id+"']").addClass('text-success'); // Success text for correct answer
             $("div[id='quizContent"+question_id+"']").hide(); // Hide that quiz
             $("div[id='quizContent"+(question_id+1)+"']").show(); // Show next quiz

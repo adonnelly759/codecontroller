@@ -28,6 +28,9 @@ def courseView(request):
     context = {}
     return render(request, 'dash/index.html', context)
 
+def editor(request):
+    return render(request, 'dash/editor.html', {})
+
 def projectLessonView(request, slug):
     c = Course.objects.get(s=slug)
     l = Lesson.objects.filter(course=c.id)
@@ -75,7 +78,7 @@ def checkAnswer(request):
     nextLessonID = q.question.quiz.lesson.id+1
     nextLesson = Lesson.objects.get(id = nextLessonID)
     question = q.question
-    maxEntries = QuizAnswer.objects.filter(question_id = question).count()
+    maxEntries = QuizQuestion.objects.filter(quiz_id=q.question.quiz.id).count()
 
     data = {
         'correct': q.correct,
@@ -115,10 +118,8 @@ def awardBadge(request):
     return JsonResponse(data)
 
 def workflow(request, project, lesson):
-    print(lesson)
     l = Lesson.objects.get(s=lesson)
-    print(l.id)
-    q = QuizQuestion.objects.filter(quiz_id = l.id)
+    q = QuizQuestion.objects.filter(quiz__lesson_id = l.id)
     qa = QuizAnswer.objects.all()
 
     if Lesson.objects.filter(id=l.id+1).exists():
@@ -131,6 +132,8 @@ def workflow(request, project, lesson):
     lesson_slug = l.s
     combine_slug = course_slug + lesson_slug
     room_name = combine_slug.replace('-', '')
+
+    print(q.count())
 
     context = {
         'lesson': l, 

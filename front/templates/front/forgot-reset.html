@@ -1,0 +1,55 @@
+{% extends 'front/base.html' %}
+{% load i18n static %}
+{% block title %}Reset Password{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-12 mt-4">
+        <h1 class="text-center text-dark">Password Reset</h1>
+    </div>
+    <div class="col-sm-12 mt-5 mb-5">
+        <div class="w-50 mx-auto">
+            {% if validlink %}
+
+            <p>Please enter your new password twice so we can verify you typed it in correctly.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">Password</label>
+                                {{ form.new_password1 }}
+                                <span class="help-block">
+                                    {% if form.new_password1.errors %}
+                                        <small class="text-danger">{{ form.new_password1.errors|striptags }}</small>
+                                    {% endif %}
+                                </span>
+                              </div> 
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">Password Again</label>
+                                {{ form.new_password2 }}
+                                <span class="help-block">
+                                    {% if form.new_password2.errors %}
+                                        <small class="text-danger">{{ form.new_password2.errors|striptags }}</small>
+                                    {% endif %}
+                                </span>
+                              </div> 
+                        </div>
+                    </div>
+                        <button type="submit" class="btn btn-lg btn-info btn-block mt-4">Reset Password</button>
+                    </form>
+
+                    {% else %}
+
+                    <p>The password reset link was invalid, possibly because it has already been used.  Please request a new password reset.</p>
+
+                    {% endif %}
+                    <p class="float-right mt-4"><a class="text-dark" href="{% url 'front:signup' %}">Not signed up yet? Start for free</a></p>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}

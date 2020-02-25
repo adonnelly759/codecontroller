@@ -13,6 +13,7 @@ urlpatterns = [
     path('trophies', views.trophy, name='trophies'),
     path('community', views.community, name='community'),
     path('activity', views.activity, name="activity"),
+    path('editor', views.editor, name="editor"),
     path('notifications', views.notifications, name='notifications'),
     path('leaderboards', views.leaderboards, name="leaderboards"),
     path('settings', views.settings, name='settings'),

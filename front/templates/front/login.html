@@ -10,12 +10,15 @@
     </div>
     <div class="col-sm-12 mt-4 align-items-center">
                 <div class="w-50 mx-auto">
+                    {% if messages %}
                     {% for message in messages %}
-                        <div class="alert alert-danger">
-                            <a class="close" href="#" data-dismiss="alert">×</a>
-                            {{ message }}
+                        <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible"{% endif %}>{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
                         </div>
                     {% endfor %}
+            {% endif %}
                         <form action="" method="POST">
                             {% csrf_token %}
                                 <div class="row">
@@ -32,16 +35,11 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-12">
-                                                <a class="text-info mt-4" href="{% url 'front:forgot' %}">Forgot my password?</a>
+                                                <a class="text-info mt-4" href="{% url 'front:password_reset' %}">Forgot my password?</a>
                                                 <button type="submit" class="btn btn-lg btn-info btn-block font-weight-bold mt-4">Log in</button>
                                             </div>
                                 </div>
                             </form>
-                    
-                            <div class="text-wrap mt-4">Or, using another account:</div>
-                    
-                            <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-google"></i></button>
-                            <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-facebook-f"></i></button>
                             <p class="float-right mt-4"><a class="text-info font-weight-bold" href="{% url 'front:signup' %}">Not signed up yet? Start for free</a></p>
                 </div>
         </div>

@@ -1,12 +1,22 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from .forms import NewUserForm, ResetForm
+from cc.settings import EMAIL_HOST_USER
 
 
 # Create your views here.
 def index(request):
-    return render(request, 'front/index.html', {})
+    if request.method == 'POST':
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Your account was successfully registered!')
+            return redirect(reverse('front:login'))
+    else:
+        form = NewUserForm()
+    return render(request, 'front/index.html', {'form': form})
 
 def plans(request):
     return render(request, 'front/plans.html', {})
@@ -29,7 +39,12 @@ def loginView(request):
     return render(request, 'front/login.html', {})
 
 def signup(request):
-    return render(request, 'front/register.html', {})
-
-def forgot(request):
-    return render(request, 'front/forgot.html', {})
+    if request.method == 'POST':
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Your account was successfully registered!')
+            return redirect(reverse('front:login'))
+    else:
+        form = NewUserForm()
+    return render(request, 'front/register.html', {'form': form})
