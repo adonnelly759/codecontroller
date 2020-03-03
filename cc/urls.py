@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
-from django.conf.urls.defaults import patterns
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 import dash.views
 import front.views
@@ -33,9 +33,4 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('tinymce/', include('tinymce.urls')),
     path('admin/', admin.site.urls),
-]
-
-if not settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-    )
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
