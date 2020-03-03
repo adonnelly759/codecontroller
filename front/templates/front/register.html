@@ -19,35 +19,70 @@
     </div>
 
     <div class="col-sm-12 col-md-6 mt-4">
-            <form>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <label for="cc-email">Email:</label>
-                            <input type="cc-email" class="form-control">
-                        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">Email Address</label>
+                        {{ form.email }}
+                        <span class="help-block">
+                            {% if form.email.errors %}
+                                <small class="text-danger">{{ form.email.errors|striptags }}</small>
+                            {% endif %}
+                        </span>
+                      </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">First Name</label>
+                        {{ form.first_name }}
+                        <span class="help-block">
+                            {% if form.first_name.errors %}
+                                <small class="text-danger">{{ form.first_name.errors|striptags }}</small>
+                            {% endif %}
+                        </span>
+                      </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">Last Name</label>
+                        {{ form.last_name }}
+                        <span class="help-block">
+                            {% if form.last_name.errors %}
+                                <small class="text-danger">{{ form.last_name.errors|striptags }}</small>
+                            {% endif %}
+                        </span>
+                      </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">Password</label>
+                        {{ form.password1 }}
+                        <span class="help-block">
+                            {% if form.password1.errors %}
+                                <small class="text-danger">{{ form.password1.errors|striptags }}</small>
+                            {% endif %}
+                        </span>
+                      </div>
                     </div>
                     <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="cc-password">Password:</label>
-                                <input type="cc-password" class="form-control">
-                            </div>
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError">Password Again</label>
+                            {{ form.password2 }}
+                            <span class="help-block">
+                                {% if form.password2.errors %}
+                                    <small class="text-danger">{{ form.password2.errors|striptags }}</small>
+                                {% endif %}
+                            </span>
+                          </div>
                         </div>
-                        <div class="col-sm-12">
-                                <button type="submit" class="btn btn-info btn-block">Sign up</button>
-                            </div>
-                </div>
-            </form>
-    
-            <div class="text-wrap mt-4">Or, using another account:</div>
-    
-            <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-google"></i> | Sign Up Using Google</button>
-            <button type="submit" class="btn btn-dark btn-block mt-2"><i class="fab fa-facebook-f"></i> | Sign Up Using Facebook</button>
-    
-            <div class="text-wrap mt-4">This page is protected by reCAPTCHA, and subject to Google’s 
-                    Privacy Policy & Terms of Service. By signing up for CodeController, 
-                    you agree to CodeControllers's Terms of Service & Privacy Policy.</div>
-        </div>
+                    <div class="col-sm-12">
+                            <button type="submit" class="btn btn-info btn-block">Get Coding Now</button>
+                        </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 

@@ -50,8 +50,6 @@ def projectLessonView(request, slug):
     show_lessons = total_lessons-not_complete
     display_more = False
 
-    print(complete-total_lessons)
-
     if complete - total_lessons == 0:
         display_more = False
     else:
@@ -99,12 +97,10 @@ def awardBadge(request):
         itemTitle = Lesson.objects.get(s=slug).title
 
     if Trophies.objects.filter(title=slug).exists():
-        print("at if")
         t = Trophies.objects.get(title=slug)
         a = Award.award_user(request.user, t)
         success = True
     else:
-        print("else")
         t = Trophies.create_trophy(action=action, title=itemTitle)
         new_t = Trophies.objects.get(title=itemTitle)
         a = Award.award_user(request.user, new_t)
@@ -132,8 +128,6 @@ def workflow(request, project, lesson):
     lesson_slug = l.s
     combine_slug = course_slug + lesson_slug
     room_name = combine_slug.replace('-', '')
-
-    print(q.count())
 
     context = {
         'lesson': l, 

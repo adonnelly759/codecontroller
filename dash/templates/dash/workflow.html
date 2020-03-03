@@ -77,12 +77,12 @@ function checkAnswer(question_id, answer_id, lesson_id){
     success: function (data) {
         if (data.correct) {
             correct++;
-            console.log(correct);
-            console.log(data.max);
+            $("label[for='customRadio"+answer_id+"']").removeClass('text-danger');
             $("label[for='customRadio"+answer_id+"']").addClass('text-success'); // Success text for correct answer
-            $("div[id='quizContent"+question_id+"']").hide(); // Hide that quiz
-            $("div[id='quizContent"+(question_id+1)+"']").show(); // Show next quiz
+            $("div[id='quizContent"+question_id+"']").slideUp(); // Hide that quiz
+            $("div[id='quizContent"+(question_id+1)+"']").slideDown(); // Show next quiz
         } else {
+            $("label[for='customRadio"+answer_id+"']").removeClass('text-success');
             $("label[for='customRadio"+answer_id+"']").addClass('text-danger');
         }
 
@@ -202,14 +202,24 @@ function updateLessonProgress(lesson_id){
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Awesome work!!</h5>
+                  <h5 class="modal-title" id="exampleModalLongTitle">Trophy Unlocked!</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                  <h4 class="text-center font-weight-bold text-dark">You earned a new badge!</h4 >
-                  <img class="img-thumbnail" src="https://i.ya-webdesign.com/images/award-badge-png-2.png">
+                    <div class="row text-center">
+                        <div class="col-sm-12 mx-auto">
+                            <div class="trophy blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" width="216px" height="232px" viewBox="0 0 216 232">
+                                    <path fill="#2B2B2B" d="M207,0C171.827,0.001,43.875,0.004,9.003,0c-5.619-0.001-9,3.514-9,9c0,28.23-0.006,151.375,0,169    c0.005,13.875,94.499,54,107.999,54S216,191.57,216,178V9C216,3.298,212.732,0,207,0z"/>
+                            </svg>
+                                <p class="title">COMPLETED</p>
+                                <p class="subtitle1">{% now "jS F Y H:i" %}</p>
+                                <p class="subtitle">{{ lesson.title }}</p>
+                            </div>  
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -359,6 +369,94 @@ function closeForm() {
         }
     };
 </script>
+
+<style>
+    @import "compass/css3";
+    @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+    @import url(https://fonts.googleapis.com/css?family=Fjalla+One);
+    .trophy {
+      position: relative;
+      width: 216px;
+      display: inline-block;
+      margin: 40px;
+    }
+    .trophy .title {
+      font-family: "Montserrat", sans-serif;
+      font-weight: bold;
+      font-size: 1.7em;
+      position: absolute;
+      top: -28px;
+      border-radius: 8px 8px 0 0;
+      text-align: center;
+      width: 100%;
+      background: red;
+      padding: 20px 0;
+    }
+    .trophy .subtitle {
+      position: absolute;
+      font-family: "Fjalla One", sans-serif;
+      font-size: 1.8em;
+      width: 100%;
+      text-align: center;
+      color: white;
+      position: absolute;
+      top: 100px;
+    }
+    
+    .trophy .subtitle1 {
+      position: absolute;
+      font-family: "Fjalla One", sans-serif;
+      font-size: 1em;
+      width: 100%;
+      text-align: center;
+      color: white;
+      position: absolute;
+      top: 80px;
+    }
+    
+    .trophy .subtitle:after {
+      content: "★ ★ ★";
+      display: block;
+      font-size: 0.4em;
+      position: relative;
+      margin: 15px 0 0;
+      transition: all 0.3s;
+    }
+    .trophy:hover .subtitle:after {
+      word-spacing: 30px;
+    }
+    .red .title {
+      background: #DC514E;
+    }
+    .red .subtitle:after {
+      color: #DC514E;
+    }
+    .green .title {
+      background: #2ecc71;
+    }
+    .green .subtitle:after {
+      color: #2ecc71;
+    }
+    .gray .title {
+      background: #95a5a6;
+    }
+    .gray .subtitle:after {
+      color: #95a5a6;
+    }
+    .yellow .title {
+      background: #f1c40f;
+    }
+    .yellow .subtitle:after {
+      color: #f1c40f;
+    }
+    .blue .title {
+      background: #3498db;
+    }
+    .blue .subtitle:after {
+      color: #3498db;
+    }
+    
+    </style>
 
 <style>
     body 
