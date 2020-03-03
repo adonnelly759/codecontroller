@@ -24,13 +24,16 @@ def index(request):
     context = {'courses': c}
     return render(request, 'dash/index.html', context)
 
+@login_required
 def courseView(request):
     context = {}
     return render(request, 'dash/index.html', context)
 
+@login_required
 def editor(request):
     return render(request, 'dash/editor.html', {})
 
+@login_required
 def projectLessonView(request, slug):
     c = Course.objects.get(s=slug)
     l = Lesson.objects.filter(course=c.id)
@@ -60,16 +63,19 @@ def projectLessonView(request, slug):
     context = {'projectTitle': c.title, 'lessons': l, 'lesson_progress': lp, 'display_more': display_more}
     return render(request, 'dash/lessons.html', context)
 
+@login_required
 def projectView(request):
     p = Course.objects.all()
     context = {'project': p}
     return render(request, 'dash/projects.html', context)
 
+@login_required
 def logoutView(request):
     logout(request)
     messages.add_message(request, messages.INFO, "You have been successfully logged out!")
     return redirect('front:index')
 
+@login_required
 def checkAnswer(request):
     answer = request.GET.get('answer_id')
     q = QuizAnswer.objects.get(id=answer)
@@ -86,6 +92,7 @@ def checkAnswer(request):
 
     return JsonResponse(data)
 
+@login_required
 def awardBadge(request):
     slug = request.GET.get('slug')
     action = request.GET.get('action')
@@ -113,6 +120,7 @@ def awardBadge(request):
 
     return JsonResponse(data)
 
+@login_required
 def workflow(request, project, lesson):
     l = Lesson.objects.get(s=lesson)
     q = QuizQuestion.objects.filter(quiz__lesson_id = l.id)
@@ -139,6 +147,7 @@ def workflow(request, project, lesson):
     }
     return render(request, 'dash/workflow.html', context)
 
+@login_required
 def updateLessonProgress(request):
     lesson = request.GET.get('lesson')
 
@@ -157,6 +166,7 @@ def updateLessonProgress(request):
 
     return JsonResponse(data)
 
+@login_required
 def community(request):
     context = {
         'room_name': mark_safe(json.dumps("community")),
@@ -164,6 +174,7 @@ def community(request):
     }
     return render(request, 'dash/community.html', context)
 
+@login_required
 def trophy(request):
     a = Award.objects.order_by('-awarded').filter(user=request.user)
 
@@ -185,6 +196,7 @@ def trophy(request):
     return render(request, 'dash/trophy.html', context)
 
 # Render activity view
+@login_required
 def activity(request):
     s = Stream.objects.order_by('-when').filter(actor=request.user)
 
@@ -202,6 +214,7 @@ def activity(request):
     return render(request, 'dash/activity.html', {'stream': s})
 
 # Render notification view
+@login_required
 def notifications(request):
     n = Notification.objects.order_by('-sent').filter(user=request.user)
 
@@ -219,6 +232,7 @@ def notifications(request):
     return render(request, 'dash/notifications.html', {'notifications': n})
 
 # Ajax notification to update
+@login_required
 def notificationSeen(request):
     user = request.user
 
@@ -236,6 +250,7 @@ def notificationSeen(request):
 
     return JsonResponse(data)
 
+@login_required
 def getNotifications(request):
     user = request.user
     result = []
@@ -259,6 +274,7 @@ def getNotifications(request):
     return JsonResponse(data)
 
 # Leaderboards
+@login_required
 def leaderboards(request):
     l = Award.objects.values('user', 'user__first_name', 'user__last_name').order_by('-total').annotate(total=Count('id'))
 
@@ -274,6 +290,7 @@ def leaderboards(request):
 
     return render(request, 'dash/leaderboards.html', {'leaderboards': l})
 
+@login_required
 def settings(request):
     if request.method == "POST":
         form = EditProfileForm(request.POST, instance=request.user)
