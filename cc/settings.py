@@ -25,7 +25,7 @@ SECRET_KEY = 'lprtu=y9oeo0tmo%$$ov6o38p+4)&o7)#t(43+uzr)hxgxkdwg'
 LOGOUT_REDIRECT_URL = '/'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
