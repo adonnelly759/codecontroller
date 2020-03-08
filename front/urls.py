@@ -7,8 +7,6 @@ from .forms import ResetForm, ResetPassword
 app_name = "front"
 urlpatterns = [
     path('', views.index, name='index'),
-    path('pricing', views.plans, name='plans'),
-    path('lessons', views.lessons, name="lessons"),
     path('accounts/login/', views.loginView, name="login"),
     path('accounts/signup', views.signup, name="signup"), 
     path('accounts/reset/', auth_views.PasswordResetView.as_view(form_class=ResetForm, success_url="done", template_name='front/forgot.html', email_template_name = 'front/reset_password_email.html'), name="password_reset"),

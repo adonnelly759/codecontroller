@@ -120,11 +120,12 @@ def awardBadge(request):
         itemTitle = Lesson.objects.get(s=slug).title
 
     # Check if trophy exists, then award user or create it
-    if Trophies.objects.filter(title=slug).exists():
+    try:
+        Trophies.objects.filter(title=slug).exists()
         t = Trophies.objects.get(title=slug)
         a = Award.award_user(request.user, t)
         success = True
-    else:
+    except:
         t = Trophies.create_trophy(action=action, title=itemTitle)
         new_t = Trophies.objects.get(title=itemTitle)
         a = Award.award_user(request.user, new_t)
