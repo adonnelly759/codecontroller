@@ -6,6 +6,10 @@ from .models import Message, Room
 
 User = get_user_model()
 
+# Consumber for websockets
+# Check Django-channels documentation
+# Modified to suit needs for CodeController
+# https://channels.readthedocs.io/en/latest/
 class ChatConsumer(WebsocketConsumer):
     def fetch_messages(self, data):
         if not Room.objects.filter(name=self.room_name).exists():

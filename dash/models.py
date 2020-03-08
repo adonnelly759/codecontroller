@@ -5,7 +5,7 @@ from tinymce.models import HTMLField
 from ckeditor.fields import RichTextField
 import uuid
 
-# Create your models here.
+# Course table
 class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -22,6 +22,7 @@ class Course(models.Model):
         self.s = slugify(self.title)
         return super(Course, self).save(*args, **kwargs)
 
+# Lesson table
 class Lesson(models.Model):
     title = models.CharField(max_length=255)
     content = RichTextField(blank=True, null=True, config_name="special")
@@ -39,6 +40,7 @@ class Lesson(models.Model):
         self.s = slugify(self.title)
         super(Lesson, self).save(*args, **kwargs)
 
+# Instructions table
 class Instructions(models.Model):
     title = models.CharField(max_length=255)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
@@ -49,6 +51,7 @@ class Instructions(models.Model):
     class Meta:
         verbose_name_plural = "Lesson Instructions"
 
+# Lesson Progress table
 class LessonProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
@@ -68,6 +71,7 @@ class LessonProgress(models.Model):
     class Meta:
         verbose_name_plural = "Lesson Progression"
 
+# Quiz table
 class Quiz(models.Model):
     title = models.CharField(max_length=255)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
@@ -78,6 +82,7 @@ class Quiz(models.Model):
     class Meta:
         verbose_name_plural = "Quizes"
 
+# Quiz Questions table
 class QuizQuestion(models.Model):
     title = models.CharField(max_length=255)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
@@ -88,6 +93,7 @@ class QuizQuestion(models.Model):
     class Meta:
         verbose_name_plural = "Quiz Questions"
 
+# Quiz Answers table
 class QuizAnswer(models.Model):
     title = models.CharField(max_length=255)
     correct = models.BooleanField(default=False)

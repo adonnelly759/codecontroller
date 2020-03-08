@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags import humanize
 
-# Create your models here.
+# Notification table
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     seen = models.BooleanField(default=False)

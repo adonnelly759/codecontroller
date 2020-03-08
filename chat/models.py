@@ -3,6 +3,7 @@ from django.db import models
 
 User = get_user_model()
 
+# Room table
 class Room(models.Model):
     name = models.CharField(max_length=255)
     counter = models.IntegerField(default=0)
@@ -10,6 +11,7 @@ class Room(models.Model):
     def __str__(self):
         return self.name
 
+# Message table
 class Message(models.Model):
     author = models.ForeignKey(User, related_name="author_messages", on_delete=models.CASCADE)
     content = models.TextField()

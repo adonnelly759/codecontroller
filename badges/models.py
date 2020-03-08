@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import random
 
 # Create your models here.
+# Trophies table
 class Trophies(models.Model):
     action = models.CharField(default="Completed", max_length=255)
     title = models.CharField(max_length=255)
@@ -18,6 +19,7 @@ class Trophies(models.Model):
     def __str__(self):
         return "Trophy for %s" % self.title
 
+# Award table
 class Award(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     trophy = models.ForeignKey(Trophies, on_delete=models.CASCADE)
